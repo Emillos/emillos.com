@@ -1,0 +1,32 @@
+.main{
+  padding:10px;
+  #gameWrapper{
+    margin: auto;
+    box-shadow: 0px 0px 0px 3px black;
+    border-radius: 4px;
+    position: relative;
+    #scoreBoard{
+      top: 0;
+      left: 0;
+      right: 0;
+      position: absolute;
+      border-bottom: 3px solid black;
+    }
+    #gameBoard{
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: ~'calc(100% - 60px)';
+      #cat{
+        position: absolute;
+        img {
+          width: 100%;
+        }
+        :hover{
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
