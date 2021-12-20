@@ -5,6 +5,7 @@
   "author": "Filtenborgweb@gmail.com",
   "main": "src/index.js",
   "scripts": {
+    "test": "echo ok",
     "start": "webpack serve --open --config webpack.dev.js --hot",
     "build": "webpack --config webpack.prod.js"
   },
