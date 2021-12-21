@@ -8,6 +8,8 @@ RUN npm install
 
 COPY . .
 
+RUN node scripts/generateFooterData.js
+
 CMD ["npm", "start"]
 
 #docker run -it -p 3000:3000 IMAGE_ID

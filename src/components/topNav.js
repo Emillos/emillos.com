@@ -6,8 +6,10 @@ const TopNav = () => {
   return (
     <div id='topnav'>
       <Link to='/'>
-        <h1>Emillos.com - Testing stuff out</h1>
+        <h2 id='logo' className='topHeader'>Emillos.com</h2>
       </Link>
+      <h2 className='topHeader'>Testing tech</h2>
+      <h2 className='topHeader mail'>Filtenborgweb@gmail.com</h2>
     </div>
   )
 }
