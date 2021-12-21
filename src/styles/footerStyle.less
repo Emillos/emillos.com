@@ -1,11 +1,39 @@
 #footer{
-  div{
-    display: inline-block;
-    a{
-      width: 30px;
-      img{
-        width: 30px;
+  border-top: 3px black solid;
+  #footerTitles{
+    padding: 10px;
+    font-weight: 600;
+    #madeWith,
+    #source{
+      display: inline-block;
+    }
+    #madeWith{
+      width: 66%;
+    }
+    #source{
+      text-align: center;
+      width: 33%;
+    }
+  }
+  #projectDetails{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    #footerGithubLink{
+      display: flex;
+      justify-content: center;
+      width: 33%;
+    }
+    #footerTechList {
+      display: flex;
+      width: 66%;
+      a{
+        margin-right: 10px;
       }
+    }
+    img{
+      height: 50px;
     }
   }
 }

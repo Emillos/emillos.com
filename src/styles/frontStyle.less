@@ -1,14 +1,49 @@
+#infoBar{
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  padding: 10px 0 10px 30px;
+  vertical-align: top;
+  text-align: left;
+  border: 3px solid black;
+  border-radius: 4px;
+  .infoItem{
+    font-weight: 600;
+    padding: 5px 0;
+  }
+  .toggleShow{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+}
+.infoNoShow{
+  border:3px solid green;
+  border-radius: 50px;
+  width: 25px;
+  height: 25px;
+  text-align: center;
+  font-weight: 600;
+  line-height: 21px;
+  color: green;
+  cursor: pointer;
+}
+
 #frontWrapper{
-  width:100%;
+  width: 100%;
+}
+#front{
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content:center;
   padding: 10px;
   .frontItem{
     border:3px solid black;
+    border-radius: 4px;
     padding: 2px 2px;
-    width: 300px;
+    width: 200px;
     text-decoration: none;
     text-align: center;
     img{

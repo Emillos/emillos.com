@@ -1,0 +1,30 @@
+{
+  "/":{
+    "techList": [
+      {
+      "url": "https://reactjs.org/",
+      "image": "https://client-images-emillos.s3.eu-west-1.amazonaws.com/pngwing.com.png",
+      "target": "_blank",
+      "alt": "ReactJS"
+      },
+      {
+        "url": "https://www.docker.com/",
+        "image": "https://client-images-emillos.s3.eu-west-1.amazonaws.com/docker.png",
+        "target": "_blank",
+        "alt": "Docker"
+      },
+      {
+        "url": "https://lesscss.org/",
+        "image": "https://client-images-emillos.s3.eu-west-1.amazonaws.com/less.png",
+        "target": "_blank",
+        "alt": "Less"
+      }
+    ],
+    "source":{
+      "url": "https://github.com/Emillos/emillos.com",
+      "image": "https://client-images-emillos.s3.eu-west-1.amazonaws.com/GitHub-64.png",
+      "target": "_blank",
+      "alt": "Github"
+    }
+  }
+}

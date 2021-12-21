@@ -11,7 +11,8 @@ const elementStyles = {
     height: '700px'
   },
   scoreBoard: {
-    height: '60px'
+    height: '60px',
+    lineHeight:'60px'
   },
   catStyle: {
     bottom: '0',
@@ -21,7 +22,7 @@ const elementStyles = {
   }
 }
 
-const initialSeconds = 42
+const initialSeconds = 10
 
 const Front = () => {
   const [ clickCount, setClickCount ] = useState(0);
