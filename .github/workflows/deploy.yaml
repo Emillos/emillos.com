@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-      - run: docker build -t emillos/simpleapp:latest -f ./client/Dockerfile.dev ./client
+      - run: docker build -t emillos/simpleapp:latest -f ./Dockerfile.dev .
       - run: docker run -e CI=true emillos/simpleapp:latest npm test
  
       - run: docker build -t emillos/simpleapp:latest .
