@@ -1,0 +1,39 @@
+name: Deploy MultiDocker
+on:
+  push:
+    branches:
+      - main
+ 
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - run: docker build -t cygnetops/react-test -f ./client/Dockerfile.dev ./client
+      - run: docker run -e CI=true cygnetops/react-test npm test
+ 
+      - run: docker build -t cygnetops/multi-client-10-14 ./client
+      - run: docker build -t cygnetops/multi-nginx-10-14 ./nginx
+      - run: docker build -t cygnetops/multi-server-10-14 ./server
+      - run: docker build -t cygnetops/multi-worker-10-14 ./worker
+ 
+      - run: docker push cygnetops/multi-client-10-14
+      - run: docker push cygnetops/multi-nginx-10-14
+      - run: docker push cygnetops/multi-server-10-14
+      - run: docker push cygnetops/multi-worker-10-14
+ 
+      - name: Generate deployment package
+        run: zip -r deploy.zip . -x '*.git*'
+ 
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v18
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
+          application_name: simple-app-test
+          environment_name: Simpleapptest-env
+          existing_bucket_name: elasticbeanstalk-eu-west-1-541850889889
+          region: eu-west-1
+          version_label: ${{ github.sha }}
+          deployment_package: deploy.zip
