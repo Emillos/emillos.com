@@ -7,5 +7,6 @@ RUN node scripts/generateFooterData.js
 RUN npm run build
 
 FROM nginx
-EXPOSE 80
-COPY --from=buildPhase /app/public /usr/share/nginx/html
+EXPOSE 3000
+COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY --from=buildphase /app/public /usr/share/nginx/html
