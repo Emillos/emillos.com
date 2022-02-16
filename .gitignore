@@ -1,3 +1,4 @@
 /node_modules
 /src/projects/*/node_modules
 /notes
+/secrets.env
