@@ -1,6 +1,6 @@
 FROM node:16-alpine as buildPhase
 WORKDIR /app
-COPY package.json .
+COPY ./package.json ./
 RUN npm install
 COPY . .
 RUN node scripts/generateFooterData.js
