@@ -80,7 +80,7 @@ class ClientCdkStack extends Stack {
     const applicationEnvironment = new elasticbeanstalk.CfnEnvironment(this, 'Environment', {
       environmentName: 'applicationEnvionment',
       applicationName: ebApplication.applicationName,
-      solutionStackName: '64bit Amazon Linux 2 v3.4.10 running Docker',
+      solutionStackName: '64bit Amazon Linux 2 v3.4.11 running Docker',
       optionSettings: optionSettingProperties
     })
     applicationEnvironment.addDependsOn(ebApplication);
