@@ -73,7 +73,7 @@ const Front = () => {
           />
         }
       </div>
-      <HighScores />
+      {/*<HighScores />*/}
     </div>
   )
 }

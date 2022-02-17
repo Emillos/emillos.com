@@ -14,7 +14,6 @@ const Front = () => {
           <div className='toggleShow' onClick={() => toggleShow()}>Close</div>
               <div className='infoItem'>Project information</div>
               <div className='infoItem'>- This is collection of small projects made to test out tech</div>
-              <div className='infoItem'>- Each project can be run individually</div>
               <div className='infoItem'>- The source code for each project is found in the bottom left</div>
               <div className='infoItem'>- A list of the techs used to create each project is found in the bottom right</div>
           </div> 
