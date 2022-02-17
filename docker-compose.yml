@@ -1,19 +1,12 @@
 version: '3'
 services:
   client:
-    stdin_open: true
-    environment:
-      CHOKIDAR_USEPOLLING: ${DEV:-false}
-    build: 
-      context: ./client
-      dockerfile: ${DOCKERFILE:-Dockerfile}
-    volumes:
-      - /app/node_modules
-      - ./client:/app
+    image: "emillos/emillos-client"
+    mem_limit: 128m
+    hostname: client
   nginx:
-    restart: always
-    build:
-      dockerfile: Dockerfile
-      context: ./nginx
+    image: "emillos/emillos-nginx"
+    mem_limit: 128m
+    hostname: nginx
     ports:
-     - '3050:80'
+      - "3050:80"
