@@ -3,17 +3,17 @@ services:
   client:
     stdin_open: true
     environment:
-      CHOKIDAR_USEPOLLING: ${DEV:-false}
+      CHOKIDAR_USEPOLLING: true
     build: 
       context: ./client
-      dockerfile: ${DOCKERFILE:-Dockerfile}
+      dockerfile: Dockerfile.dev
     volumes:
       - /app/node_modules
       - ./client:/app
   nginx:
     restart: always
     build:
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
       context: ./nginx
     ports:
      - '3050:80'
