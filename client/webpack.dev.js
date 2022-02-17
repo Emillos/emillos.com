@@ -9,6 +9,7 @@ module.exports = merge(common, {
     static: {
       directory: path.resolve(__dirname, './public'),
     },
+    allowedHosts: 'all',
     port: '3000',
     historyApiFallback: true
   },

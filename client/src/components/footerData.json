@@ -18,6 +18,12 @@
         "image": "https://client-images-emillos.s3.eu-west-1.amazonaws.com/less.png",
         "target": "_blank",
         "alt": "Less"
+      },
+      {
+        "url": "https://webpack.js.org/",
+        "image": "https://client-images-emillos.s3.eu-west-1.amazonaws.com/webpack.png",
+        "target": "_blank",
+        "alt": "Webpack"
       }
     ],
     "source":{

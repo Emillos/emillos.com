@@ -1,4 +1,4 @@
-name: Deploy MultiDocker
+name: Deploy Emillos.com
 on:
   push:
     branches:
@@ -10,12 +10,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-      - run: docker build -t emillos/simpleapp:latest -f ./Dockerfile.dev .
-      - run: docker run -e CI=true emillos/simpleapp:latest npm test
+      - run: docker build -t emillos/emillos-client:latest -f ./Dockerfile .
+      - run: docker run -e CI=true emillos/emillos-client:latest npm test
  
-      - run: docker build -t emillos/simpleapp:latest .
+      - run: docker build -t emillos/emillos-client:latest .
  
-      - run: docker push emillos/simpleapp:latest
+      - run: docker push emillos/emillos-client:latest
  
       - name: Generate deployment package
         run: zip -r deploy.zip . -x '*.git*'
@@ -25,8 +25,8 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
           aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
-          application_name: simple-app-test
-          environment_name: Simpleapptest-env
+          application_name: emillos-application
+          environment_name: Emillos-application-env
           existing_bucket_name: elasticbeanstalk-eu-west-1-541850889889
           region: eu-west-1
           version_label: ${{ github.sha }}
