@@ -26,7 +26,7 @@ jobs:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
           aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
           application_name: emillos-application
-          environment_name: Emillos-application-env
+          environment_name: applicationEnvionment
           existing_bucket_name: elasticbeanstalk-eu-west-1-541850889889
           region: eu-west-1
           version_label: ${{ github.sha }}
