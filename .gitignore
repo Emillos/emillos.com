@@ -1,3 +1,4 @@
 /client/node_modules
 /notes
 /secrets.env
+/client-cdk/env.json
