@@ -15,7 +15,7 @@
       }
     ],
     "source":{
-      "url": "https://github.com/Emillos/emillos.com/tree/master/src/projects/clickAcat",
+      "url": "https://github.com/Emillos/emillos.com/tree/master/client/src/projects/clickAcat",
       "image": "https://client-images-emillos.s3.eu-west-1.amazonaws.com/GitHub-64.png",
       "target": "_blank",
       "alt": "Github"

@@ -22,8 +22,10 @@ const buildFile = (data) => {
 }
 
 const createFooterData = async () => {
+  console.log('Creating footer data')
   const jsonfile = await fetchData()
   const createFooterFile = await buildFile(jsonfile)
 }
 
 createFooterData()
+module.exports = createFooterData
