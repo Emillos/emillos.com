@@ -7,10 +7,10 @@ This is a new project and a work in progress, so pretty barebones at the moment,
 You can check it out here [emillos.com](http://emillos.com/)
 
 # IaC (Infrastructure as code)
-Learning to use the AWS-CDK to manage the application 
+Using AWS-CDK to manage the application 
 
 # Containers
-Learning to use Docker to manage the lifecycle of my container
+Using Docker to manage the lifecycle of my container
 
 # CI/CD
 Currently using Github actions, will be moved to a aws code pipeline at some point and set up in the CDK
