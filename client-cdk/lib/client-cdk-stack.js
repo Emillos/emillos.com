@@ -6,7 +6,7 @@ const route53Targets = require('aws-cdk-lib/aws-route53-targets')
 const route53 = require('aws-cdk-lib/aws-route53')
 
 const environVars = require('../env.json')
-const { APPLICATION_NAME, HOSTED_ZONE_NAME, EB_ENVIRONMENT_URL } = environVars
+const { APPLICATION_NAME, HOSTED_ZONE_NAME, EB_ENVIRONMENT_URL, SSL_CERTIFICATE } = environVars
 const { Stack, Duration } = require('aws-cdk-lib');
 
 class ClientCdkStack extends Stack {
@@ -74,12 +74,32 @@ class ClientCdkStack extends Stack {
         namespace: 'aws:autoscaling:launchconfiguration',
         optionName: 'InstanceType',
         value: 't2.micro'
-        },
-        {
-          namespace: 'aws:autoscaling:launchconfiguration',
-          optionName: 'IamInstanceProfile',
-          value: profileName
-        } 
+      },
+      {
+        namespace: 'aws:autoscaling:launchconfiguration',
+        optionName: 'IamInstanceProfile',
+        value: profileName
+      },
+      {
+        namespace: 'aws:elb:listener:443',
+        optionName: 'ListenerProtocol',
+        value: 'HTTPS'
+      },
+      {
+        namespace: 'aws:elb:listener:443',
+        optionName: 'InstanceProtocol',
+        value: 'HTTP'
+      },
+      {
+        namespace: 'aws:elb:listener:443',
+        optionName: 'InstancePort',
+        value: '80'
+      },
+      {
+        namespace: 'aws:elb:listener:443',
+        optionName: 'SSLCertificateId',
+        value: SSL_CERTIFICATE
+      }
     ]
     const applicationEnvironment = new elasticbeanstalk.CfnEnvironment(this, 'Environment', {
       environmentName: 'applicationEnvionment',
@@ -93,7 +113,12 @@ class ClientCdkStack extends Stack {
     const zone = route53.HostedZone.fromLookup(this, 'hostedZone', {
       domainName: HOSTED_ZONE_NAME,
     });
-
+    const cnameRecord = new route53.CnameRecord(this, 'CnameRecordForWWW', {
+      domainName: HOSTED_ZONE_NAME,
+      zone,
+      recordName: `www.${HOSTED_ZONE_NAME}`
+    })
+    cnameRecord.applyRemovalPolicy(cdk.RemovalPolicy.DESTROY)
     /*
       For now its not possible to create a record in route54 and point it towards the EB in one go.
       read https://github.com/aws/aws-cdk/issues/17992 for more details
