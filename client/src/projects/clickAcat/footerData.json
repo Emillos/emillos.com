@@ -1,5 +1,6 @@
 {
   "/clickacat":{
+    "name":"Click-A-Cat",
     "techList": [
       {
       "url": "https://reactjs.org/",
