@@ -30,7 +30,7 @@ class ClientCdkStack extends Stack {
     EbInstanceRole.addManagedPolicy(managedPolicy);
     
     const profileName = `${applicationName}-InstanceProfile`
-    const instanceProfile = new iam.CfnInstanceProfile(this, profileName, {
+    new iam.CfnInstanceProfile(this, profileName, {
       instanceProfileName: profileName,
       roles: [
         EbInstanceRole.roleName
@@ -119,6 +119,7 @@ class ClientCdkStack extends Stack {
       recordName: `www.${HOSTED_ZONE_NAME}`
     })
     cnameRecord.applyRemovalPolicy(cdk.RemovalPolicy.DESTROY)
+
     /*
       For now its not possible to create a record in route54 and point it towards the EB in one go.
       read https://github.com/aws/aws-cdk/issues/17992 for more details
@@ -127,9 +128,8 @@ class ClientCdkStack extends Stack {
       Once to build the stask.
       And once again once we've added the Beanstalk environment url to the .env.
     */
-
     if(EB_ENVIRONMENT_URL){
-      const domainRouting = new route53.ARecord(this, 'AliasRecord', {
+      new route53.ARecord(this, 'AliasRecord', {
         zone,
         target: route53.RecordTarget.fromAlias(new route53Targets.ElasticBeanstalkEnvironmentEndpointTarget(EB_ENVIRONMENT_URL)),
       });

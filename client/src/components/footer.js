@@ -11,11 +11,13 @@ const Footer = () => {
   })
   return (
     <div id='footer'>
-      <div id='footerTitles'>
-        <div id="source">Project source</div> 
-        <div id="madeWith">Made with</div>
-      </div>
       {localFooterData &&
+        <div>
+          <div id='footerTitles'>
+          <div id="source">{`${localFooterData.name} Project source`}</div>
+          <div id="madeWith">Made with</div>
+        </div>
+
         <div id='projectDetails'>
           <div id='footerGithubLink'>
             <a href={localFooterData.source.url} target={localFooterData.source.target}>
@@ -31,6 +33,7 @@ const Footer = () => {
               )
             })}
           </div>
+        </div>
       </div>
     }
     </div>

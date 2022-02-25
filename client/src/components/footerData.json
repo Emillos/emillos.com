@@ -1,5 +1,6 @@
 {
   "/":{
+    "name":"Root",
     "techList": [
       {
       "url": "https://reactjs.org/",
@@ -24,6 +25,30 @@
         "image": "https://client-images-emillos.s3.eu-west-1.amazonaws.com/webpack.png",
         "target": "_blank",
         "alt": "Webpack"
+      },
+      {
+        "url": "https://www.nginx.com/",
+        "image": "https://client-images-emillos.s3.eu-west-1.amazonaws.com/nginx.png",
+        "target": "_blank",
+        "alt": "NGINX"
+      },
+      {
+        "url": "https://docs.aws.amazon.com/cdk/api/v2/",
+        "image": "https://client-images-emillos.s3.eu-west-1.amazonaws.com/aws-cdk.png",
+        "target": "_blank",
+        "alt": "AWS-CDK"
+      },
+      {
+        "url": "https://aws.amazon.com/elasticbeanstalk/",
+        "image": "https://client-images-emillos.s3.eu-west-1.amazonaws.com/eb.png",
+        "target": "_blank",
+        "alt": "Elastic Beanstalk"
+      },
+      {
+        "url": "https://aws.amazon.com/route53/",
+        "image": "https://client-images-emillos.s3.eu-west-1.amazonaws.com/route53.png",
+        "target": "_blank",
+        "alt": "Route53"
       }
     ],
     "source":{
