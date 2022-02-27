@@ -1,21 +1,25 @@
+@import "styleItems";
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Roboto', sans-serif;
+  font-family: @generalFont;
   text-decoration: none;
-}
+  #app {
+    position: relative;
+  }
+  .main{
+    top: 60px;
+    position: absolute;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 ~'calc(50% - 500px)';
+    min-height: ~'calc(100vh - 155px)';
 
-#app {
-  position: relative;
-}
-.main{
-  display: block;
-  margin: 60px auto 0;
-  max-width: 1000px;
-}
-
-.spacer{
-  display: block;
-  padding: 5px;
+  }
+  .spacer{
+    display: block;
+    padding: 5px;
+  }
 }
