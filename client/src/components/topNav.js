@@ -6,9 +6,9 @@ const TopNav = () => {
   return (
     <div id='topnav'>
       <Link to='/'>
-        <h2 id='logo' className='topHeader'>Emillos.com</h2>
+        <h2 id='logo' className='topHeader'>Emillos.com - Doing tech</h2>
       </Link>
-      <h2 className='topHeader'>Doing tech</h2>
+      <h2 className='topHeader'></h2>
     </div>
   )
 }

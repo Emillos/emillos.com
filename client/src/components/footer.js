@@ -27,7 +27,7 @@ const Footer = () => {
           <div id='footerTechList'>
             {localFooterData.techList.map(item => {
               return( 
-                <a href={item.url} target={item.target}>
+                <a href={item.url} target={item.target} key={item.alt}>
                   <img src={item.image} alt={item.alt}/>
                 </a>
               )
