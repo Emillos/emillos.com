@@ -6,6 +6,7 @@ import TopNav from './components/topNav'
 import Front from './components/front'
 import Footer from './components/footer'
 import NoShow from './components/noShow'
+import Login from './components/login'
 
 import ClickACcat from './projects/clickAcat/index'
 
@@ -17,6 +18,7 @@ ReactDOM.render(
     <Routes>
       <Route path="/" element={<Front />} />
       <Route path='clickacat/' element={<ClickACcat />} />
+      <Route path='login/' element={<Login />} />
       <Route path="*" element={<NoShow />} />
     </Routes>
     <Footer />
