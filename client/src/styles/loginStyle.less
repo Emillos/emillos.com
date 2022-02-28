@@ -1,0 +1,53 @@
+@import "styleItems";
+#login{
+  .loginWrapper{
+    margin: 100px auto;
+    width: 600px;
+    border-radius: 4px;
+    border: 3px solid black;
+    padding: 50px 20px;
+    background-color: @mainColour2;
+    > *{
+      display: block;
+    }
+    label{
+      font-size: 28px;
+      font-weight: 600;
+      margin: 5px 0px;
+    }
+    input{
+      margin: 10px 0;
+      height: 42px;
+      border-radius: 4px;
+      border: 3px solid black;
+      text-indent: 5px;
+      font-size: 25px;
+      width: 100%;
+    }
+    button{
+      cursor: pointer;
+      font-weight: 600;
+      height: 42px;
+      width: 100%;
+      border: 3px solid rgb(39, 32, 32);
+      margin: 20px 0;
+      border-radius: 4px;
+      background-color: @okButtonColour;
+      font-size: 20px;
+    }
+    .alternateOption{
+      cursor: pointer;
+      border-top: 3px solid @mainColour1;
+      padding-top: 10px;
+      font-weight: 600;
+      color: @CTABlue;
+      font-size: 28px;
+    }
+    .forgotPwText{
+      margin-top: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      color: @mainColour4;
+    }
+  }
+}
