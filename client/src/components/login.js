@@ -6,30 +6,31 @@ import '../styles/loginStyle.less'
 const initialState = {
   email:'',
   password: '',
-  passwordCheck:''
+  passwordCheck:'',
+  userName:''
+}
+
+const Message = (message) => {
+  return <div className='errorMessage'>{message.message}</div>
 }
 
 const Login = () => {
   const [ activeSection, setActiveSection ] = useState('login');
   const [ authDetails, setAuthDetails ] = useState(initialState)
   const [ errorMessage, setErrorMessage ] = useState('')
-  console.log(authDetails)
 
   const handleSubmit = (e, action) => {
     setErrorMessage('Auth is still under construction')
   }
 
   const setValue = (e) => {
-    console.log('test')
     setAuthDetails({...authDetails, [e.target.name]: e.target.value})
   }
 
-  const handleToggle = () => {
-    console.log(activeSection)
+  const handleToggle = (e, module) => {
     setAuthDetails(initialState)
     setErrorMessage('')
-    let toggleValue = activeSection == 'login' ? 'create' : 'login'
-    setActiveSection(toggleValue)
+    setActiveSection(module)
   }
 
   return (
@@ -42,18 +43,20 @@ const Login = () => {
           <label>Password</label>
           <input type='password' name="password" value={authDetails['password']} onChange={setValue} />
           <button name="login" onClick={handleSubmit}>Login</button>
-          {errorMessage &&
-            <div className='errorMessage'>
-              {errorMessage}
-            </div>
-          }
+          {errorMessage && <Message message={errorMessage}/>}
           <div className='alternateOption'
-            onClick={handleToggle}>
+            onClick={e => handleToggle(e, 'create')}>
             Or Create Account
           </div>
+          <div className='forgotPwText'
+            onClick={e => handleToggle(e, 'pwForgot')}>
+            Forgot password?
+          </div>
         </div>
-        :
+        : activeSection === 'create' ?
         <div>
+          <label>Username</label>
+          <input type='text' name="userName" value={authDetails['userName']} onChange={setValue} />
           <label>Email</label>
           <input type='text' name="email" value={authDetails['email']} onChange={setValue} />
           <label>Password</label>
@@ -61,18 +64,28 @@ const Login = () => {
           <label>Retype password</label>
           <input type='password' name="passwordCheck" value={authDetails['passwordCheck']} onChange={setValue} />
           <button name="create" onClick={handleSubmit}>Create Account</button>
-          {errorMessage &&
-            <div className='errorMessage'>
-              {errorMessage}
-            </div>
-          }
+          {errorMessage && <Message message={errorMessage}/>}
           <div className='alternateOption'
-            onClick={handleToggle}>
+            onClick={e => handleToggle(e, 'login')}>
+            Or Login
+          </div>
+          <div className='forgotPwText'
+            onClick={e => handleToggle(e, 'pwForgot')}>
+            Forgot password?
+          </div>
+        </div>
+        :
+        <div>
+          <label>Email</label>
+          <input type='text' name="email" value={authDetails['email']} onChange={setValue} />
+          <button name="pwReset" onClick={handleSubmit}>Reset Password</button>
+          {errorMessage && <Message message={errorMessage}/>}
+          <div className='alternateOption'
+            onClick={e => handleToggle(e, 'login')}>
             Or Login
           </div>
         </div>
       }
-      <div className='forgotPwText'>Forgot password?</div>
       </div>
     </div>
   )

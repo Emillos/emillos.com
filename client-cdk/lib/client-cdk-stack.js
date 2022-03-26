@@ -1,12 +1,16 @@
-const ec2 = require('aws-cdk-lib/aws-ec2')
+const path = require('path')
+
+const s3 = require('aws-cdk-lib/aws-s3')
 const cdk = require('aws-cdk-lib')
-const iam = require('aws-cdk-lib/aws-iam')
-const elasticbeanstalk = require('aws-cdk-lib/aws-elasticbeanstalk')
-const route53Targets = require('aws-cdk-lib/aws-route53-targets')
+const cloudfront = require('aws-cdk-lib/aws-cloudfront')
+const cloudfront_origins = require('aws-cdk-lib/aws-cloudfront-origins')
+const acm = require('aws-cdk-lib/aws-certificatemanager')
+const targets = require('aws-cdk-lib/aws-route53-targets')
+const pipelines = require('aws-cdk-lib/pipelines')
 const route53 = require('aws-cdk-lib/aws-route53')
 
 const environVars = require('../env.json')
-const { APPLICATION_NAME, HOSTED_ZONE_NAME, EB_ENVIRONMENT_URL, SSL_CERTIFICATE } = environVars
+const { HOSTED_ZONE_NAME } = environVars
 const { Stack, Duration } = require('aws-cdk-lib');
 
 class ClientCdkStack extends Stack {
@@ -19,121 +23,84 @@ class ClientCdkStack extends Stack {
   constructor(scope, id, props) {
     super(scope, id, props);
 
-    const applicationName = `${APPLICATION_NAME}-application`
+    // S3 configuations
+    const websiteBucket = new s3.Bucket(this, 'websiteBucket', {
+      bucketName: HOSTED_ZONE_NAME,
+      blockPublicAccess: new s3.BlockPublicAccess({ blockPublicPolicy: false }),
+      publicReadAccess: true,
+      isWebsite: true,
+      removalPolicy: cdk.RemovalPolicy.DESTROY, // will be removed in prod
+      autoDeleteObjects: true, // will be removed in prod
+    })
 
-    // roles
-    const EbInstanceRole = new iam.Role(this, `${applicationName}-aws-elasticbeanstalk-ec2-role`, {
-      assumedBy: new iam.ServicePrincipal('ec2.amazonaws.com'),
-    });
-    
-    const managedPolicy = iam.ManagedPolicy.fromAwsManagedPolicyName('AWSElasticBeanstalkWebTier')
-    EbInstanceRole.addManagedPolicy(managedPolicy);
-    
-    const profileName = `${applicationName}-InstanceProfile`
-    new iam.CfnInstanceProfile(this, profileName, {
-      instanceProfileName: profileName,
-      roles: [
-        EbInstanceRole.roleName
-      ]
+    // Get Hosted Zone
+    const zone = route53.HostedZone.fromLookup(this, 'Zone', {
+      domainName: HOSTED_ZONE_NAME
     });
 
-    // VPC
-    const vpc = new ec2.Vpc(this, 'VPC', {
-      cidr: '10.0.0.0/16',
-      natGateways: 0,
-      maxAzs: 3,
-      subnetConfiguration: [
+    // Create Certificate
+    const certificate = new acm.DnsValidatedCertificate(this, 'SiteCertificate', {
+      domainName: HOSTED_ZONE_NAME,
+      hostedZone: zone,
+      subjectAlternativeNames: [`www.${HOSTED_ZONE_NAME}`, `*.${HOSTED_ZONE_NAME}`],
+      region: 'us-east-1',
+      cleanupRoute53Records: true
+    });
+
+    const cloudfrontOAI = new cloudfront.OriginAccessIdentity(this, 'cloudfront-OAI', {
+      comment: `OAI for CDN`
+    });
+
+    // Create Cname for www domain
+    const cname = new route53.CnameRecord(this, 'Cname', {
+      domainName: `${HOSTED_ZONE_NAME}`,
+      zone: zone,
+      comment: 'Cname for www',
+      recordName: `www.${HOSTED_ZONE_NAME}`,
+    });
+
+    // Cloudfront distribution
+    const CDN = new cloudfront.Distribution(this, 'CDN', {
+      certificate: certificate,
+      priceClass: 'PriceClass_100',
+      defaultRootObject: 'index.html',
+      domainNames: [HOSTED_ZONE_NAME, `www.${HOSTED_ZONE_NAME}`],
+      errorResponses:[
         {
-          name: `${APPLICATION_NAME}-private-subnet`,
-          subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
-          cidrMask: 24 
+          httpStatus: 403,
+          responseHttpStatus: 403,
+          responsePagePath: '/index.html',
         }
-      ]
-    });
-
-    // Security group
-    const applicationSG = new ec2.SecurityGroup(this, `${applicationName}-sg`, {
-      vpc,
-      allowAllOutbound: false,
-      description: `application SG for ${APPLICATION_NAME}`
-    })
-    applicationSG.addEgressRule(
-      ec2.Peer.anyIpv4(),
-      ec2.Port.tcpRange(3000, 4000),
-      'allow outgroing traffic from between port 3000 and 4000'
-    )
-
-    // Elastic beanstalk setup 
-    const ebApplication = new elasticbeanstalk.CfnApplication(this, `${APPLICATION_NAME}-eb-application`, {
-      applicationName,
-      description: `Application for ${APPLICATION_NAME}`,      
-    })
-
-    let optionSettingProperties = [elasticbeanstalk.CfnEnvironment.OptionSettingProperty =
-      {
-        namespace: 'aws:autoscaling:launchconfiguration',
-        optionName: 'InstanceType',
-        value: 't2.micro'
-      },
-      {
-        namespace: 'aws:autoscaling:launchconfiguration',
-        optionName: 'IamInstanceProfile',
-        value: profileName
-      },
-      {
-        namespace: 'aws:elb:listener:443',
-        optionName: 'ListenerProtocol',
-        value: 'HTTPS'
-      },
-      {
-        namespace: 'aws:elb:listener:443',
-        optionName: 'InstanceProtocol',
-        value: 'HTTP'
-      },
-      {
-        namespace: 'aws:elb:listener:443',
-        optionName: 'InstancePort',
-        value: '80'
-      },
-      {
-        namespace: 'aws:elb:listener:443',
-        optionName: 'SSLCertificateId',
-        value: SSL_CERTIFICATE
+      ],
+      defaultBehavior: {
+        origin: new cloudfront_origins.S3Origin(websiteBucket, {originAccessIdentity: cloudfrontOAI}),
+        compress: true,
+        allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
       }
-    ]
-    const applicationEnvironment = new elasticbeanstalk.CfnEnvironment(this, 'Environment', {
-      environmentName: 'applicationEnvionment',
-      applicationName: ebApplication.applicationName,
-      solutionStackName: '64bit Amazon Linux 2 v3.4.11 running Docker',
-      optionSettings: optionSettingProperties
-    })
-    applicationEnvironment.addDependsOn(ebApplication);
+   });
 
-    // fetch Hosted zone Id
-    const zone = route53.HostedZone.fromLookup(this, 'hostedZone', {
-      domainName: HOSTED_ZONE_NAME,
+    // Redirect hits to the cloudfront distrubution
+    new route53.ARecord(this, 'CDNAliasRecord', {
+      recordName: `${HOSTED_ZONE_NAME}`,
+      target: route53.RecordTarget.fromAlias(new targets.CloudFrontTarget(CDN)),
+      zone
     });
-    const cnameRecord = new route53.CnameRecord(this, 'CnameRecordForWWW', {
-      domainName: HOSTED_ZONE_NAME,
-      zone,
-      recordName: `www.${HOSTED_ZONE_NAME}`
-    })
-    cnameRecord.applyRemovalPolicy(cdk.RemovalPolicy.DESTROY)
 
-    /*
-      For now its not possible to create a record in route54 and point it towards the EB in one go.
-      read https://github.com/aws/aws-cdk/issues/17992 for more details
+    // Pipeline
 
-      Instead we'll have to run the cdk twice.
-      Once to build the stask.
-      And once again once we've added the Beanstalk environment url to the .env.
-    */
-    if(EB_ENVIRONMENT_URL){
-      new route53.ARecord(this, 'AliasRecord', {
-        zone,
-        target: route53.RecordTarget.fromAlias(new route53Targets.ElasticBeanstalkEnvironmentEndpointTarget(EB_ENVIRONMENT_URL)),
-      });
-    }
+    const source = pipelines.CodePipelineSource.gitHub('Emillos/emillos.com', 'master');
+    const pipeline = new pipelines.CodePipeline(this, 'Pipeline', {
+      synth: new pipelines.ShellStep('Synth', {
+        input: source,
+        commands: [
+          'cd client/',
+          'npm run build',
+          `aws s3 cp ./public/bundle.js s3://${HOSTED_ZONE_NAME}/bundle.js`,
+          `aws s3 cp ./public/index.html s3://${HOSTED_ZONE_NAME}/index.html`,
+        ],
+      }),
+    });
   }
 }
 
