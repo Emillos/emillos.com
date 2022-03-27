@@ -10,8 +10,9 @@ const pipelines = require('aws-cdk-lib/pipelines')
 const route53 = require('aws-cdk-lib/aws-route53')
 
 const environVars = require('../env.json')
-const { HOSTED_ZONE_NAME } = environVars
+const { HOSTED_ZONE_NAME, CODESTAR_ARN } = environVars
 const { Stack, Duration } = require('aws-cdk-lib');
+const { CodeStarConnectionsSourceAction } = require('aws-cdk-lib/aws-codepipeline-actions')
 
 class ClientCdkStack extends Stack {
   /**
@@ -88,16 +89,17 @@ class ClientCdkStack extends Stack {
     });
 
     // Pipeline
-
-    const source = pipelines.CodePipelineSource.gitHub('Emillos/emillos.com', 'master');
+    const source = pipelines.CodePipelineSource.connection('Emillos/emillos.com', 'master', {
+      connectionArn: CODESTAR_ARN
+    })
     const pipeline = new pipelines.CodePipeline(this, 'Pipeline', {
       synth: new pipelines.ShellStep('Synth', {
         input: source,
         commands: [
           'cd client/',
+          'npm -i',
           'npm run build',
-          `aws s3 cp ./public/bundle.js s3://${HOSTED_ZONE_NAME}/bundle.js`,
-          `aws s3 cp ./public/index.html s3://${HOSTED_ZONE_NAME}/index.html`,
+          `aws s3 cp --recursive ./public s3://${HOSTED_ZONE_NAME}/`
         ],
       }),
     });
