@@ -92,33 +92,6 @@ class ClientCdkStack extends Stack {
     });
 
     // Pipeline
-    /* const source = pipelines.CodePipelineSource.connection('Emillos/emillos.com', 'master', {
-      connectionArn: CODESTAR_ARN
-    })
-    const pipeline = new pipelines.PipelineProject(this, 'Pipeline', {
-      synth: new pipelines.ShellStep('Synth', {
-        input: source,
-        commands: [
-          'cd client/',
-          'echo Installing dependencies',
-          'npm install',
-          'echo Building app',
-          'npm run build',
-          `echo Copy build to s3://${HOSTED_ZONE_NAME}`,
-          `aws s3 cp --recursive ./public s3://${HOSTED_ZONE_NAME}/`
-        ],
-      }),
-    });
-
-    
-    pipeline.addToRolePolicy(
-      new iam.PolicyStatement({
-        effect: iam.Effect.ALLOW,
-        actions: ['s3:*'],
-        resources:  [`arn:aws:s3:::${HOSTED_ZONE_NAME}`]
-      })
-    ) */
-
     // https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_codebuild-readme.html#codepipeline
 
     const sourceBuildStep = {      
