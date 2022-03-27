@@ -97,8 +97,11 @@ class ClientCdkStack extends Stack {
         input: source,
         commands: [
           'cd client/',
+          'echo Installing dependencies',
           'npm -i',
+          'echo Building app',
           'npm run build',
+          `echo Copy build to s3://${HOSTED_ZONE_NAME}`,
           `aws s3 cp --recursive ./public s3://${HOSTED_ZONE_NAME}/`
         ],
       }),
