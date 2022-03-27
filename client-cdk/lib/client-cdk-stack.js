@@ -8,11 +8,14 @@ const acm = require('aws-cdk-lib/aws-certificatemanager')
 const targets = require('aws-cdk-lib/aws-route53-targets')
 const pipelines = require('aws-cdk-lib/pipelines')
 const route53 = require('aws-cdk-lib/aws-route53')
+const iam = require('aws-cdk-lib/aws-iam')
+const codebuild = require('aws-cdk-lib/aws-codebuild')
 
 const environVars = require('../env.json')
 const { HOSTED_ZONE_NAME, CODESTAR_ARN } = environVars
 const { Stack, Duration } = require('aws-cdk-lib');
 const { CodeStarConnectionsSourceAction } = require('aws-cdk-lib/aws-codepipeline-actions')
+const { Pipeline } = require('aws-cdk-lib/aws-codepipeline')
 
 class ClientCdkStack extends Stack {
   /**
@@ -89,16 +92,16 @@ class ClientCdkStack extends Stack {
     });
 
     // Pipeline
-    const source = pipelines.CodePipelineSource.connection('Emillos/emillos.com', 'master', {
+    /* const source = pipelines.CodePipelineSource.connection('Emillos/emillos.com', 'master', {
       connectionArn: CODESTAR_ARN
     })
-    const pipeline = new pipelines.CodePipeline(this, 'Pipeline', {
+    const pipeline = new pipelines.PipelineProject(this, 'Pipeline', {
       synth: new pipelines.ShellStep('Synth', {
         input: source,
         commands: [
           'cd client/',
           'echo Installing dependencies',
-          'npm -i',
+          'npm install',
           'echo Building app',
           'npm run build',
           `echo Copy build to s3://${HOSTED_ZONE_NAME}`,
@@ -106,6 +109,59 @@ class ClientCdkStack extends Stack {
         ],
       }),
     });
+
+    
+    pipeline.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['s3:*'],
+        resources:  [`arn:aws:s3:::${HOSTED_ZONE_NAME}`]
+      })
+    ) */
+
+    // https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_codebuild-readme.html#codepipeline
+
+    const sourceBuildStep = {      
+      owner: 'Emillos',
+      repo: 'emillos.com',
+    }
+    const buildStep = {
+      version: '0.2',
+      phases: {
+        install: {
+          commands: [
+            'cd client/',
+            'echo installing dependencies',
+            'npm install'
+          ]
+        },
+        build:{
+          commands:[
+            'echo Building app',
+            'npm run build',
+            `echo Copy build to s3://${HOSTED_ZONE_NAME}`,
+            'ls',
+            'ls ./public',
+            `aws s3 cp --recursive ./public s3://${HOSTED_ZONE_NAME}/`
+          ]
+        }
+      }
+    }
+
+    const codeBuildLine = new codebuild.Project(this, 'emillos.com-buildline', {
+      source: codebuild.Source.gitHub(sourceBuildStep),
+      buildSpec: codebuild.BuildSpec.fromObject(buildStep),
+    })
+    
+    codeBuildLine.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: [ 
+          's3:*'
+        ],
+        resources:  [`arn:aws:s3:::${HOSTED_ZONE_NAME}`, `arn:aws:s3:::${HOSTED_ZONE_NAME}/*`]
+      })
+    )
   }
 }
 
