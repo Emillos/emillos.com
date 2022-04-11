@@ -14,7 +14,7 @@ const codebuild = require('aws-cdk-lib/aws-codebuild')
 
 const environVars = require('../env.json')
 const { HOSTED_ZONE_NAME, REPO_OWNER, REPO_NAME, REPO_ACCESS_TOKEN } = environVars
-const { Stack, Duration } = require('aws-cdk-lib');
+const { Stack, Duration, SecretValue } = require('aws-cdk-lib');
 const { CodeStarConnectionsSourceAction } = require('aws-cdk-lib/aws-codepipeline-actions')
 const { Pipeline } = require('aws-cdk-lib/aws-codepipeline')
 
@@ -99,7 +99,7 @@ class ClientCdkStack extends Stack {
       actionName: 'GitHub_Source',
       owner: REPO_OWNER,
       repo: REPO_NAME,
-      oauthToken: REPO_ACCESS_TOKEN,
+      oauthToken: SecretValue.secretsManager('Github_token', {jsonField: 'github_token'}),
       output: sourceOutput,
       branch: 'master'
     })
