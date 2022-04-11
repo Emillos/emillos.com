@@ -6,13 +6,14 @@ const cloudfront = require('aws-cdk-lib/aws-cloudfront')
 const cloudfront_origins = require('aws-cdk-lib/aws-cloudfront-origins')
 const acm = require('aws-cdk-lib/aws-certificatemanager')
 const targets = require('aws-cdk-lib/aws-route53-targets')
-const pipelines = require('aws-cdk-lib/pipelines')
+const codePipelineActions = require('aws-cdk-lib/aws-codepipeline-actions')
+const codePipeline = require('aws-cdk-lib/aws-codepipeline')
 const route53 = require('aws-cdk-lib/aws-route53')
 const iam = require('aws-cdk-lib/aws-iam')
 const codebuild = require('aws-cdk-lib/aws-codebuild')
 
 const environVars = require('../env.json')
-const { HOSTED_ZONE_NAME, CODESTAR_ARN } = environVars
+const { HOSTED_ZONE_NAME, REPO_OWNER, REPO_NAME, REPO_ACCESS_TOKEN } = environVars
 const { Stack, Duration } = require('aws-cdk-lib');
 const { CodeStarConnectionsSourceAction } = require('aws-cdk-lib/aws-codepipeline-actions')
 const { Pipeline } = require('aws-cdk-lib/aws-codepipeline')
@@ -92,12 +93,17 @@ class ClientCdkStack extends Stack {
     });
 
     // Pipeline
-    // https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_codebuild-readme.html#codepipeline
+    const sourceOutput = new codePipeline.Artifact()
 
-    const sourceBuildStep = {      
-      owner: 'Emillos',
-      repo: 'emillos.com',
-    }
+    const sourceAction = new codePipelineActions.GitHubSourceAction({
+      actionName: 'GitHub_Source',
+      owner: REPO_OWNER,
+      repo: REPO_NAME,
+      oauthToken: REPO_ACCESS_TOKEN,
+      output: sourceOutput,
+      branch: 'master'
+    })
+
     const buildStep = {
       version: '0.2',
       phases: {
@@ -121,12 +127,28 @@ class ClientCdkStack extends Stack {
       }
     }
 
-    const codeBuildLine = new codebuild.Project(this, 'emillos.com-buildline', {
-      source: codebuild.Source.gitHub(sourceBuildStep),
-      buildSpec: codebuild.BuildSpec.fromObject(buildStep),
+    const pipelineProject = new codebuild.PipelineProject(this, 'pipelineProject')
+
+    const buildAction = new codePipelineActions.CodeBuildAction({
+      actionName: 'CodeBuild',
+      project: pipelineProject,
+      input: sourceOutput,
+      buildSpec: codebuild.BuildSpec.fromObject(buildStep)
     })
+
+    const pipeline = new codePipeline.Pipeline(this, 'Pipeline')
     
-    codeBuildLine.addToRolePolicy(
+    pipeline.addStage({
+      stageName: 'Source',
+      actions: [sourceAction]
+    })
+
+    pipeline.addStage({
+      stageName: 'Build',
+      actions: [buildAction]
+    })
+
+    pipeline.addToRolePolicy(
       new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
         actions: [ 
