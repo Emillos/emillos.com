@@ -128,14 +128,16 @@ class ClientCdkStack extends Stack {
       }
     }
 
-    const pipelineProject = new codebuild.PipelineProject(this, 'pipelineProject')
+    const pipelineProject = new codebuild.PipelineProject(this, 'pipelineProject', {
+      projectName: 'client_build_project',
+      buildSpec: codebuild.BuildSpec.fromObject(buildStep)
+    })
 
     const buildAction = new codePipelineActions.CodeBuildAction({
       actionName: 'Build_client',
       project: pipelineProject,
       input: sourceOutput,
-      outputs: [outputWebsite],
-      buildSpec: codebuild.BuildSpec.fromObject(buildStep)
+      outputs: [outputWebsite]
     })
 
     const pipeline = new codePipeline.Pipeline(this, 'Pipeline', {
