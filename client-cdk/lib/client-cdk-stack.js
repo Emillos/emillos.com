@@ -118,13 +118,12 @@ class ClientCdkStack extends Stack {
         build:{
           commands:[
             'echo Building app',
-            'npm run build',
-            'ls -a'
+            'npm run build'
           ]
         }
       },
       artifacts: {
-        'base-directory': './public',
+        'base-directory': 'client/public',
         files: ['**/*']
       }
     }
