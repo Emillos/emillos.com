@@ -118,7 +118,8 @@ class ClientCdkStack extends Stack {
         build:{
           commands:[
             'echo Building app',
-            'npm run build'
+            'npm run build',
+            'ls -a'
           ]
         }
       },
