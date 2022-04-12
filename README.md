@@ -7,11 +7,12 @@ This is a new project and a work in progress, so pretty barebones at the moment,
 You can check it out here [emillos.com](http://emillos.com/)
 
 # IaC (Infrastructure as code)
-Using AWS-CDK to manage the application 
+Using AWS-CDK V.2 to manage the application 
 
 # Containers
-Using Docker to manage the lifecycle of my container
+This project was initially deployed to Elastic Beanstalk, however to reduce cost, it has now been moved to a S3 as a static website.
+Even though they are now longer used, the Docker and NGINX files are still kept, should anyone be courious to see examples.
 
 # CI/CD
-Currently using Github actions, will be moved to a aws code pipeline at some point and set up in the CDK
+Using aws code pipeline
 
