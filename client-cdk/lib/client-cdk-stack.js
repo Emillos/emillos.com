@@ -140,6 +140,12 @@ class ClientCdkStack extends Stack {
       outputs: [outputWebsite]
     })
 
+    const deployAction = new codePipelineActions.S3DeployAction({
+      actionName: 'Deploy_client',
+      input: outputWebsite,
+      bucket: websiteBucket
+    })
+
     const pipeline = new codePipeline.Pipeline(this, 'Pipeline', {
       pipelineName: `Pipeline-${APPLICATION_NAME}`
     })
@@ -152,6 +158,11 @@ class ClientCdkStack extends Stack {
     pipeline.addStage({
       stageName: 'Build',
       actions: [buildAction]
+    })
+
+    pipeline.addStage({
+      stageName: 'Deploy',
+      actions: [deployAction]
     })
 
     pipeline.addToRolePolicy(
