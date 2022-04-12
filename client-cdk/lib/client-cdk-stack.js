@@ -99,7 +99,7 @@ class ClientCdkStack extends Stack {
       actionName: 'GitHub_Source',
       owner: REPO_OWNER,
       repo: REPO_NAME,
-      oauthToken: SecretValue.secretsManager('Github_token', {jsonField: 'github_token'}),
+      oauthToken: SecretValue.plainText(REPO_ACCESS_TOKEN),
       output: sourceOutput,
       branch: 'master'
     })
