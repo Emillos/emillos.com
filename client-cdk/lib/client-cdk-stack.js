@@ -13,7 +13,7 @@ const iam = require('aws-cdk-lib/aws-iam')
 const codebuild = require('aws-cdk-lib/aws-codebuild')
 
 const environVars = require('../env.json')
-const { HOSTED_ZONE_NAME, REPO_OWNER, REPO_NAME, REPO_ACCESS_TOKEN } = environVars
+const { HOSTED_ZONE_NAME, REPO_OWNER, REPO_NAME, REPO_ACCESS_TOKEN, APPLICATION_NAME } = environVars
 const { Stack, Duration, SecretValue } = require('aws-cdk-lib');
 const { CodeStarConnectionsSourceAction } = require('aws-cdk-lib/aws-codepipeline-actions')
 const { Pipeline } = require('aws-cdk-lib/aws-codepipeline')
@@ -94,9 +94,10 @@ class ClientCdkStack extends Stack {
 
     // Pipeline
     const sourceOutput = new codePipeline.Artifact()
+    const outputWebsite = new codePipeline.Artifact()
 
     const sourceAction = new codePipelineActions.GitHubSourceAction({
-      actionName: 'GitHub_Source',
+      actionName: 'Get_Source',
       owner: REPO_OWNER,
       repo: REPO_NAME,
       oauthToken: SecretValue.plainText(REPO_ACCESS_TOKEN),
@@ -117,26 +118,29 @@ class ClientCdkStack extends Stack {
         build:{
           commands:[
             'echo Building app',
-            'npm run build',
-            `echo Copy build to s3://${HOSTED_ZONE_NAME}`,
-            'ls',
-            'ls ./public',
-            `aws s3 cp --recursive ./public s3://${HOSTED_ZONE_NAME}/`
+            'npm run build'
           ]
         }
+      },
+      artifacts: {
+        'base-directory': './public',
+        files: ['**/*']
       }
     }
 
     const pipelineProject = new codebuild.PipelineProject(this, 'pipelineProject')
 
     const buildAction = new codePipelineActions.CodeBuildAction({
-      actionName: 'CodeBuild',
+      actionName: 'Build_client',
       project: pipelineProject,
       input: sourceOutput,
+      outputs: [outputWebsite],
       buildSpec: codebuild.BuildSpec.fromObject(buildStep)
     })
 
-    const pipeline = new codePipeline.Pipeline(this, 'Pipeline')
+    const pipeline = new codePipeline.Pipeline(this, 'Pipeline', {
+      pipelineName: `Pipeline-${APPLICATION_NAME}`
+    })
     
     pipeline.addStage({
       stageName: 'Source',
