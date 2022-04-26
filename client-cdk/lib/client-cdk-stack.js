@@ -13,7 +13,7 @@ const iam = require('aws-cdk-lib/aws-iam')
 const codebuild = require('aws-cdk-lib/aws-codebuild')
 
 const environVars = require('../env.json')
-const { HOSTED_ZONE_NAME, REPO_OWNER, REPO_NAME, REPO_ACCESS_TOKEN, APPLICATION_NAME } = environVars
+const { HOSTED_ZONE_NAME, REPO_OWNER, REPO_NAME, REPO_ACCESS_TOKEN, APPLICATION_NAME } = environVars // TODO Move these to secrets
 const { Stack, Duration, SecretValue } = require('aws-cdk-lib');
 const { CodeStarConnectionsSourceAction } = require('aws-cdk-lib/aws-codepipeline-actions')
 const { Pipeline } = require('aws-cdk-lib/aws-codepipeline')
