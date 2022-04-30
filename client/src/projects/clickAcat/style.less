@@ -1,8 +1,9 @@
+@import "../../styles/styleItems.less";
 .main{
   padding:10px;
   #gameWrapper{
     margin: auto;
-    box-shadow: 0px 0px 0px 3px black;
+    box-shadow: 0px 0px 0px 3px @mainColour1;
     border-radius: 4px;
     position: relative;
     #conclusion{
@@ -15,20 +16,35 @@
         cursor: pointer;
         margin-top: 25px;
         padding: 10px 25px;
-        border: 3px solid green;
-        background-color: limegreen;
+        font-weight: 600;
+        border: 3px solid @mainColour1;
+        background-color: @mainColour3;
         border-radius: 4px;
         font-size: 20px;
-        color: white;
+        color: @mainColour4;
+        &.okButton{
+          padding: 6px 25px;
+          background-color: @okButtonColour;
+        }
+      }
+      h4{
+        color: @mainColour4;
+      }
+      input[type="text"]{
+        height: 40px;
+        font-weight: 600;
+        margin-right: 10px;
+        font-size: 18px;
       }
     }
     #scoreBoard{
-      background-color: burlywood;;
+      background-color: @mainColour3;
       top: 0;
       left: 0;
       right: 0;
+      color: @mainColour4;
       position: absolute;
-      border-bottom: 3px solid black;
+      border-bottom: 3px solid @mainColour1;
       div{
         font-size: 25px;
         font-weight: 600;
@@ -38,30 +54,57 @@
       }
     }
     #gameBoard{
-      background-color: antiquewhite;
+      background-color: @mainColour2;
       position: absolute;
       bottom: 0;
       left: 0;
       right: 0;
       height: ~'calc(100% - 60px)';
       .startMe{
-        border: 3px solid green;
+        border: 3px solid @mainColour1;
         margin: 225px 25px;
         padding: 25px;
-        background-color: limegreen;
+        background-color: @mainColour3;
         border-radius: 4px;
-        color: white;
+        font-weight: 600;
+        color: @mainColour4;
         font-size: 25px;
         text-align: center;
       }
       #cat{
         position: absolute;
         img {
+          box-shadow: 0px 0px 0px 3px black;
+          border-radius: 4px;
           width: 100%;
         }
         :hover{
           cursor: pointer;
         }
+      }
+    }
+  }
+  #highscoreWrapper{
+    color:@mainColour4;
+    margin: 20px auto;
+    box-shadow: 0px 0px 0px 3px @mainColour1;
+    border-radius: 4px;
+    width: 500px;
+    height: 200px;
+    background-color: @mainColour3;
+    .highscore{
+      padding: 5px;
+      text-align: center;
+      h3{
+        text-decoration: underline;
+      }
+    }
+    ul{
+      font-weight: 600;
+      margin-top: 10px;
+      list-style-type: none;
+      li{
+        margin: 10px;
       }
     }
   }

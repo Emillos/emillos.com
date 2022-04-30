@@ -4,6 +4,8 @@ import ScoreBoard from './scoreBoard'
 import GameBoard from './gameBoard'
 import HighScores from './highScores'
 import Conclusion from './conclusion'
+import axios from 'axios'
+import configs from '../../configs/apiConfigs.json'
 
 const elementStyles = {
   board:{
@@ -24,13 +26,23 @@ const elementStyles = {
 
 const initialSeconds = 10
 
+const getHighScoresAPI = async (setHighscores) => {
+  const req = await axios.get(`${configs.apiBaseUrl}/fetchHighscoreEndpoint?project=clickacat`, {headers: configs.standardHeaders})
+  console.log('req: ', req)
+  setHighscores(req.data.message)
+}
+
 const Front = () => {
   const [ clickCount, setClickCount ] = useState(0);
   const [ timerBool, setTimerBool ] = useState(false)
   const [ seconds, setSeconds ] = useState(initialSeconds)
   const [ showGame, setShowGame ] = useState(true)
+  const [ highScores, setHighscores ] = useState([])
 
-  useEffect(() => {
+  useEffect( async () => {
+    await getHighScoresAPI(setHighscores)
+  }, [])
+  useEffect( () => {
     let interval = null
     if(timerBool && seconds > 0){
       interval = setInterval(() => {
@@ -70,10 +82,12 @@ const Front = () => {
             setSeconds={setSeconds}
             initialSeconds={initialSeconds}
             setClickCount={setClickCount}
+            highScores={highScores}
+            setHighscores={setHighscores}
           />
         }
       </div>
-      {/*<HighScores />*/}
+      <HighScores scores={highScores}/>
     </div>
   )
 }
