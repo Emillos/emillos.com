@@ -1,0 +1,6 @@
+{
+  "apiBaseUrl": "https://9aw8wr7hp2.execute-api.eu-west-1.amazonaws.com/prod",
+  "standardHeaders": {
+    "Content-Type" : "Application/json"
+  }
+}
