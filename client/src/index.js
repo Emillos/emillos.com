@@ -9,6 +9,7 @@ import NoShow from './components/noShow'
 import Login from './components/login'
 
 import ClickACcat from './projects/clickAcat/index'
+import ShadowRabbit from './projects/shadowRabbit/app'
 
 import './styles/generalStyle.less'
 
@@ -18,6 +19,7 @@ ReactDOM.render(
     <Routes>
       <Route path="/" element={<Front />} />
       <Route path='clickacat/' element={<ClickACcat />} />
+      <Route path='shadowrabbit/' element={<ShadowRabbit />} />
       <Route path='login/' element={<Login />} />
       <Route path="*" element={<NoShow />} />
     </Routes>

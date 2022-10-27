@@ -7,9 +7,12 @@ const Front = () => {
     <div id='front'>
       <div className='frontItem'>
         <Link to='/clickacat'>
-          <div className='frontItemHeader'>
-            Click-A-Cat
-          </div>
+          <div className='frontItemHeader'>Click-A-Cat</div>
+        </Link>
+      </div>
+      <div className='frontItem'>
+        <Link to='/shadowrabbit'>
+          <div className='frontItemHeader'>a rabbit and its shadow</div>
         </Link>
       </div>
     </div>
