@@ -1,0 +1,26 @@
+{
+  "/clickacat":{
+    "name":"Click-A-Cat",
+    "techList": [
+      {
+      "url": "https://reactjs.org/",
+      "image": "https://client-images-emillos.s3.eu-west-1.amazonaws.com/pngwing.com.png",
+      "target": "_blank",
+      "alt": "ReactJS"
+      },
+      {
+        "url": "https://lesscss.org/",
+        "image": "https://client-images-emillos.s3.eu-west-1.amazonaws.com/less.png",
+        "target": "_blank",
+        "alt": "Less"
+      }
+    ],
+    "source":{
+      "url": "https://github.com/Emillos/emillos.com/tree/master/client/src/projects/clickAcat",
+      "image": "https://client-images-emillos.s3.eu-west-1.amazonaws.com/GitHub-64.png",
+      "target": "_blank",
+      "alt": "Github"
+    }
+  }
+}
+

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 const GameBoard = props => {
   const { clickCounter, setClickCounter,  gameSize: {board, scoreBoard, catStyle}, timer, setTimer} = props
   const [catPosition, setCatPosition] = useState(catStyle);
-  const catImage = 'https://www.vhv.rs/dpng/d/28-287493_orange-cat-png-transparent-png.png'
+  const catImage = 'https://client-images-emillos.s3.eu-west-1.amazonaws.com/towerdefence/cat.png'
   
   let randomizePos = (min, max) => {
     let pos = Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.floor(min))
