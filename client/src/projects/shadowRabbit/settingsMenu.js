@@ -23,6 +23,25 @@ class SettingsMenu extends Phaser.Scene{
       this.registry.set('soundOn', soundOn)
     })
 
+
+    this.add.text(225, 190, 'Controls', { fontSize: '32px', fill: fontColor })
+    this.add.text(225, 225, 'Move up: Arrow up', { fontSize: '18px', fill: fontColor })
+    this.add.text(225, 250, 'Move down: Arrow down', { fontSize: '18px', fill: fontColor })
+    this.add.text(225, 275, 'Move left: Arrow left', { fontSize: '18px', fill: fontColor })
+    this.add.text(225, 300, 'Move right: Arrow right', { fontSize: '18px', fill: fontColor })
+    this.add.text(225, 325, 'Menu in game: "ESC"', { fontSize: '18px', fill: fontColor })
+
+    this.add.text(225, 350, 'Power ups', { fontSize: '32px', fill: fontColor })
+    this.add.image(250, 400, 'carrotWhite').setScale(0.3)
+    this.add.text(275, 390, '+1 Health', { fontSize: '18px', fill: fontColor })
+    this.add.image(250, 425, 'carrotRed').setScale(0.3)
+    this.add.text(275, 415, 'Clear Board', { fontSize: '18px', fill: fontColor })
+    this.add.image(250, 450, 'carrotGold').setScale(0.3)
+    this.add.text(275, 440, '+1 Multiplier', { fontSize: '18px', fill: fontColor })
+    this.add.image(250, 475, 'carrotBlue').setScale(0.3)
+    this.add.text(275, 465, 'speed for 5 seconds', { fontSize: '18px', fill: fontColor })
+
+
     if(this.registry.get('fromScene') == 'menu'){
       this.add.image(100, 160, 'button').setScale(0.7)
       .setInteractive()
