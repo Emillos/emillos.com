@@ -137,9 +137,9 @@ class Game extends Phaser.Scene {
     this.collider.visible = false
 
     // timers and stuff
-    this.time.addEvent({ delay: initialValues.initialGameTimer, loop: true, callback: this.updateTime})
-    carrotTimer = this.time.addEvent({ delay: initialValues.initialCarrotTimer, loop: true, callback: this.spawnCarrot})
-    timerText = this.add.text(300, 16, `Spawn time: ${carrotTimer.delay}`, { fontSize: '20px', fill: '#FFF' });
+    this.time.addEvent({ delay: initialValues.initialGameTimer, loop: true, callback: this.updateTime, callbackScope: this})
+    carrotTimer = this.time.addEvent({ delay: initialValues.initialCarrotTimer, loop: true, callback: this.spawnCarrot })
+    timerText = this.add.text(300, 16, `Spawn time: ${this.formatCarrotTimer(carrotTimer.delay)}s`, { fontSize: '20px', fill: '#FFF' });
 
     this.physics.add.overlap(this.shadowImg, this.carrots, this.collectCarrot, null, this);
     this.physics.add.overlap(this.collider, this.carrots, this.missedCarrot, null, this);
@@ -237,11 +237,23 @@ class Game extends Phaser.Scene {
 
   updateTime(){
     gameTime += 1
-    if(gameTime % gameIncraseTime == 0 && carrotTimer.delay>800){
+    if(gameTime % gameIncraseTime == 0 && carrotTimer.delay > 800){
       carrotTimer.delay -= 10
-      timerText.setText('Spawn time: ' + carrotTimer.delay)
+      timerText.setText(`Spawn time: ${this.formatCarrotTimer(carrotTimer.delay)}s`)
     }
   }
+
+  formatCarrotTimer(delay){
+    let d = delay.toString()
+    let returnTime
+    if(delay > 1000){
+      returnTime = d.slice(0,1) + '.' + d.slice(1)
+    } else {
+      returnTime = `0.${delay}`
+    }
+    return returnTime
+  }
+
   borderControl(val1, val2){
     return val1 > val2
   }
