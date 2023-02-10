@@ -18,8 +18,6 @@ const lambda = require('aws-cdk-lib/aws-lambda')
 const environVars = require('../env.json')
 const { HOSTED_ZONE_NAME, REPO_OWNER, REPO_NAME, REPO_ACCESS_TOKEN, APPLICATION_NAME, DYNAMO_TABLE, DYNAMO_GSI } = environVars // TODO Move these to secrets
 const { Stack, Duration, SecretValue } = require('aws-cdk-lib');
-const { CodeStarConnectionsSourceAction } = require('aws-cdk-lib/aws-codepipeline-actions')
-const { Pipeline } = require('aws-cdk-lib/aws-codepipeline')
 
 class ClientCdkStack extends Stack {
   /**
