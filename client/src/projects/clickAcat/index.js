@@ -10,7 +10,7 @@ import configs from '../../configs/apiConfigs.json'
 const elementStyles = {
   board:{
     width: '500px',
-    height: '700px'
+    height: '550px'
   },
   scoreBoard: {
     height: '60px',

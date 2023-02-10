@@ -2,7 +2,7 @@
 
 const cdk = require('aws-cdk-lib');
 const { ClientCdkStack } = require('../lib/client-cdk-stack');
-
+console.log(process.env.CDK_DEFAULT_ACCOUNT)
 const app = new cdk.App();
 new ClientCdkStack(app, 'ClientCdkStack', {
   env: {

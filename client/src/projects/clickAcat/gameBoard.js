@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-
 const GameBoard = props => {
   const { clickCounter, setClickCounter,  gameSize: {board, scoreBoard, catStyle}, timer, setTimer} = props
   const [catPosition, setCatPosition] = useState(catStyle);
