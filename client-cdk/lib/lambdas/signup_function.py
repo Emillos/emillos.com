@@ -4,14 +4,14 @@ client = boto3.client('cognito-idp')
 CLIENT_ID = os.environ["COGNITO_APP_CLIENT_ID"]
 
 res = {
-	"statusCode": 200, 
-	"headers": {
-    "Access-Control-Allow-Origin" : "*", # Required for CORS support to work
-    "Access-Control-Allow-Credentials" : True, # Required for cookies, authorization headers with HTTPS
-		"Access-Control-Allow-Headers": "Application/json",
-		"Access-Control-Allow-Methods":'*'
-	}, "body": {} 
-};
+    "statusCode": 200, 
+    "headers": {
+        "Access-Control-Allow-Origin" : "*", # Required for CORS support to work
+        "Access-Control-Allow-Credentials" : True, # Required for cookies, authorization headers with HTTPS
+        "Access-Control-Allow-Headers": "Application/json",
+        "Access-Control-Allow-Methods":'*'
+    }, "body": {} 
+}
 
 def handler(event, context):
   response = client.sign_up(

@@ -14,16 +14,12 @@ res = {
 }
 
 def handler(event, context):
-  pprint(event)
   email = event.get("body").get("email")
   client_id = os.environ["COGNITO_APP_CLIENT_ID"]
-  print(email)
-  print(client_id)
-  
+
   forgot = client.forgot_password(
     ClientId=client_id,
     Username=email
   )
-  print('forgot', forgot)
 
-  return "res"
+  return forgot

@@ -15,7 +15,6 @@ const codebuild = require('aws-cdk-lib/aws-codebuild')
 const dynamoDB = require('aws-cdk-lib/aws-dynamodb')
 const lambda = require('aws-cdk-lib/aws-lambda')
 const cognito = require('aws-cdk-lib/aws-cognito')
-//const acm = require('@aws-cdk-lib/aws-certificatemanager')
 
 const environVars = require('../env.json')
 const { HOSTED_ZONE_NAME, REPO_OWNER, REPO_NAME, REPO_ACCESS_TOKEN, APPLICATION_NAME, DYNAMO_TABLE, DYNAMO_GSI, ACMARN, BASE_API } = environVars // TODO Move these to secrets
@@ -63,7 +62,7 @@ class ClientCdkStack extends Stack {
     getHighScore.addToRolePolicy(
       new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
-        actions: ['dynamodb:*'], 
+        actions: ['dynamodb:*'],
         resources: [dynamoTable.tableArn,`${dynamoTable.tableArn}/index/*`]
       })
     )
@@ -456,7 +455,6 @@ class ClientCdkStack extends Stack {
     )
 
     // api
-    console.log(certificate)
     const api = new apigateway.RestApi(this, `${APPLICATION_NAME}Api`, {
       proxy: false,
       domainName: {
