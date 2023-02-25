@@ -17,7 +17,7 @@ const lambda = require('aws-cdk-lib/aws-lambda')
 const cognito = require('aws-cdk-lib/aws-cognito')
 
 const environVars = require('../env.json')
-const { HOSTED_ZONE_NAME, REPO_OWNER, REPO_NAME, REPO_ACCESS_TOKEN, APPLICATION_NAME, DYNAMO_TABLE, DYNAMO_GSI, ACMARN, BASE_API } = environVars // TODO Move these to secrets
+const { HOSTED_ZONE_NAME, REPO_OWNER, REPO_NAME, REPO_ACCESS_TOKEN, APPLICATION_NAME, DYNAMO_TABLE, DYNAMO_GSI, ACMARN, , BASE_API_2 } = environVars // TODO Move these to secrets
 const { Stack, Duration, SecretValue } = require('aws-cdk-lib');
 
 class ClientCdkStack extends Stack {
@@ -111,7 +111,8 @@ class ClientCdkStack extends Stack {
       handler: 'cognito_custom_message_function.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, 'lambdas/')),
       environment:{
-        BASE_API
+        BASE_API,
+        BASE_API_2
       }
     })
 
@@ -143,7 +144,7 @@ class ClientCdkStack extends Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY
     })
   
-    const fromEmailAddress = `noreply@${HOSTED_ZONE_NAME}`
+    const fromEmailAddress = `${APPLICATION_NAME}@${HOSTED_ZONE_NAME}`
 
     const cfnUserPool = userPool.node.defaultChild
 

@@ -1,6 +1,6 @@
 import boto3
 import os
-from pprint import pprint
+import json
 
 client = boto3.client('cognito-idp')
 res = { 
@@ -10,16 +10,22 @@ res = {
     "Access-Control-Allow-Credentials" : True, # Required for cookies, authorization headers with HTTPS
     "Access-Control-Allow-Headers": "Application/json",
     "Access-Control-Allow-Methods":"*"
-  }, "body": {"status": True, "message": "ok"} 
+  }, "body": {} 
 }
 
 def handler(event, context):
-  email = event.get("body").get("email")
-  client_id = os.environ["COGNITO_APP_CLIENT_ID"]
+  body = json.loads(event['body'])
+  email = body.get("email")
 
-  forgot = client.forgot_password(
-    ClientId=client_id,
-    Username=email
-  )
+  try:
+    forgot = client.forgot_password(
+      ClientId=os.environ["COGNITO_APP_CLIENT_ID"],
+      Username=email
+    )
+    res["body"]["message"] = "ok"
+  except Exception as e:
+    print(e)
+    res["body"]["message"] = "error"
 
-  return forgot
+  res["body"] = json.dumps(res["body"])
+  return res

@@ -6,7 +6,7 @@ import '../styles/itemStyle.less'
 const Item = () => {
   const [item, setItem] = useState({});
   let params = useParams();
-  console.log(params)
+  //console.log(params)
   useEffect(() => {
     {/* this data will come from a dynamodb query*/}
     let item = {}

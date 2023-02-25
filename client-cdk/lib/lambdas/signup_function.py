@@ -1,5 +1,6 @@
 import boto3
 import os
+import json
 client = boto3.client('cognito-idp')
 CLIENT_ID = os.environ["COGNITO_APP_CLIENT_ID"]
 
@@ -14,17 +15,24 @@ res = {
 }
 
 def handler(event, context):
-  response = client.sign_up(
-      ClientId=CLIENT_ID,
-      Username=event.get("body").get("email"),
-      Password=event.get("body").get("password"),
-      UserAttributes=[
-          {
-              'Name': 'email',
-              'Value': event.get("body").get("email")
-          },
-      ]
-  )
-  res["body"] = response
-  return res
+    body = json.loads(event['body'])
+    try:
+        response = client.sign_up(
+            ClientId=CLIENT_ID,
+            Username=body.get("email"),
+            Password=body.get("password"),
+            UserAttributes=[
+                {
+                    'Name': 'email',
+                    'Value': body.get("email")
+                },
+            ]
+        )
+        res["body"]["message"] = "ok"
+    except Exception as e:
+        print(e)
+        res["body"]["message"] = "error"
+
+    res["body"] = json.dumps(res["body"])
+    return res
   

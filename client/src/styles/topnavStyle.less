@@ -1,7 +1,6 @@
 @import "styleItems";
 #topnav{
   color: @fontColour1;
-  width: 100%;
   background-color: @mainColour1;
   top: 0;
   height: 60px;
@@ -12,7 +11,16 @@
     text-align: center;
   }
   .topHeader{
+    height: 100%;
     width: 33%;
     display: inline-block;
+    vertical-align: top;
+    img{
+      padding: 5px;
+      height: 90%;
+    }
+    p{
+      line-height: 1.5;
+    }
   }
 }
