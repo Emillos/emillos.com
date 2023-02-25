@@ -28,7 +28,6 @@ const initialSeconds = 10
 
 const getHighScoresAPI = async (setHighscores) => {
   const req = await axios.get(`${configs.apiBaseUrl}/fetchHighscoreEndpoint?project=clickacat`, {headers: configs.standardHeaders})
-  console.log('req: ', req)
   setHighscores(req.data.message)
 }
 

@@ -11,16 +11,17 @@ res = {
     "Access-Control-Allow-Credentials" : True, # Required for cookies, authorization headers with HTTPS
     "Access-Control-Allow-Headers": "Application/json",
     "Access-Control-Allow-Methods":"*"
-  }, "body": {"status": True, "message": "ok"} 
+  }, "body": {} 
 }
 
 def handler(event, context):
   pprint(event)
   client_id = os.environ["COGNITO_APP_CLIENT_ID"]
-  email = event.get("body").get("data").get("email")
-  username = event.get("body").get("data").get("username")
-  code = event.get("body").get("data").get("code")
-  new_password = event.get("body").get("data").get("new_password")
+  body = json.loads(event['body'])
+  email = body.get("email")
+  username = body.get("username")
+  code = body.get("code")
+  new_password = body.get("new_password")
 
   params = {
     "ClientId": client_id,
@@ -30,16 +31,10 @@ def handler(event, context):
   }
   try:
     confirm = client.confirm_forgot_password(params).promise()
-    print('cognito response', confirm)
+    res["body"]["message"] = "ok"
   except Exception as e: 
     print('err', e)
-    if e.code == "ExpiredCodeException":
-      res["body"]["message"] = 'Reset expiried, try reset again'
-    
-    if e.code == "LimitExceededException":
-      res["body"]["message"] = e.get("message")
-    
-    res["body"]["status"] = False
-    res["body"] = json.dumps(res["body"])
-  print(res)
+    res["body"]["message"] = "error"
+
+  res["body"] = json.dumps(res["body"])
   return res

@@ -1,29 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-
-import TopNav from './components/topNav'
-import Front from './components/front'
-import Footer from './components/footer'
-import NoShow from './components/noShow'
-import Login from './components/login'
-
-import ClickACcat from './projects/clickAcat/index'
-import ShadowRabbit from './projects/shadowRabbit/app'
+import { BrowserRouter } from "react-router-dom";
+import Auth from './components/auth'
 
 import './styles/generalStyle.less'
 
 ReactDOM.render(
   <BrowserRouter>
-    <TopNav />
-    <Routes>
-      <Route path="/" element={<Front />} />
-      <Route path='clickacat/' element={<ClickACcat />} />
-      <Route path='shadowrabbit/' element={<ShadowRabbit />} />
-      <Route path='login/' element={<Login />} />
-      <Route path="*" element={<NoShow />} />
-    </Routes>
-    <Footer />
+    <Auth/>
   </BrowserRouter>,
   document.getElementById('app')
 );
