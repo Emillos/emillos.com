@@ -28,8 +28,8 @@ def handler(event, context):
       Username=user_name,
       ConfirmationCode=confirmation_code
     )
-    res["headers"]["Location"] = 'https://{}/signin?confirmed=true'.format(os.environ["DOMAIN"])
+    res["headers"]["Location"] = 'https://{}/signin?signupok=true'.format(os.environ["DOMAIN"])
   except Exception as e: 
     print(e)
-    res["headers"]["Location"] = 'https://{}/signin?confirmed=false'.format(os.environ["DOMAIN"])
+    res["headers"]["Location"] = 'https://{}/signin?signupok=false'.format(os.environ["DOMAIN"])
   return res

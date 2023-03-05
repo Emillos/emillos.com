@@ -1,6 +1,6 @@
 import os
 BASE_API = os.environ["BASE_API"]
-BASE_API = os.environ["BASE_API_2"]
+
 def handler(event, context):
   code = event.get("request").get("codeParameter")
   user_name = event.get("userName")

@@ -27,7 +27,7 @@ const onFinish = async(e, values, setErrorMessage) => {
   }
 }
 
-const onFinishFailed = (errorInfo, yes) => { 
+const onFinishFailed = (errorInfo) => { 
   console.log('Failed:', errorInfo);
 }
 
