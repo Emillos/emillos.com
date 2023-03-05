@@ -11,7 +11,7 @@ import axios from 'axios'
 import ClickACcat from '../projects/clickAcat/index'
 import ShadowRabbit from '../projects/shadowRabbit/app'
 
-import { Layout, Space } from 'antd';
+import { Layout, Space, FloatButton } from 'antd';
 const { Header, Footer, Sider, Content } = Layout;
 
 const baseUrl = 'https://api.emillos.com/'
@@ -45,12 +45,14 @@ const Auth = () => {
     <div>
       <Header>
         <TopNav auth={auth} setAuth={setAuth} />
+        <FloatButton shape="square"
+        onClick={() => console.log('click')} />
       </Header>
       <Routes>
         <Route path="/" element={<Front />} />
         <Route path='checkmail/' element={<CheckMail />} />
         <Route path='checkmailreset/' element={<CheckMailReset />} />
-        <Route path='passwordresetconfirm/' element={<PasswordRestConfirm />} />
+        <Route path='passwordresetconfirm' element={<PasswordRestConfirm />} />
         <Route path='clickacat/' element={<ClickACcat />} />
         <Route path='shadowrabbit/' element={<ShadowRabbit />} />
         <Route path='signin/' element={<Login auth={auth} setAuth={setAuth} />} />

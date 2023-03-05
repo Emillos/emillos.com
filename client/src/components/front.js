@@ -1,20 +1,34 @@
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
+import { Card, Col, Row } from 'antd';
 import '../styles/frontStyle.less'
 
+const { Meta } = Card;
 const Front = () => {
   return (
     <div id='front'>
-      <div className='frontItem'>
-        <Link to='/clickacat'>
-          <div className='frontItemHeader'>Click-A-Cat</div>
-        </Link>
-      </div>
-      <div className='frontItem'>
-        <Link to='/shadowrabbit'>
-          <div className='frontItemHeader'>a rabbit and its shadow</div>
-        </Link>
-      </div>
+      <Row gutter={16}>
+        <Col span={8}>
+          <Link to='/clickacat'>
+            <Card
+              hoverable
+              style={{ width: 240 }}
+              cover={<img src='https://client-images-emillos.s3.eu-west-1.amazonaws.com/towerdefence/cat.png' />}>
+              <Meta title="Click-A-Cat" description='Game'/>
+            </Card>
+          </Link> 
+        </Col>
+        <Col span={8}>
+          <Link to='/shadowrabbit'>
+            <Card
+              hoverable
+              style={{ width: 240 }}
+              cover={<img alt="example" src='https://client-images-emillos.s3.eu-west-1.amazonaws.com/shadowrabbit/carrotBlue.png' />}>
+              <Meta title="A rabbit and its shadow" description='Game' />
+            </Card>
+          </Link>
+        </Col>
+      </Row>
     </div>
   )
 }
