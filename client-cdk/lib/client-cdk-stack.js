@@ -17,7 +17,7 @@ const lambda = require('aws-cdk-lib/aws-lambda')
 const cognito = require('aws-cdk-lib/aws-cognito')
 
 const environVars = require('../env.json')
-const { HOSTED_ZONE_NAME, REPO_OWNER, REPO_NAME, REPO_ACCESS_TOKEN, APPLICATION_NAME, DYNAMO_TABLE, DYNAMO_GSI, ACMARN, , BASE_API_2 } = environVars // TODO Move these to secrets
+const { HOSTED_ZONE_NAME, REPO_OWNER, REPO_NAME, REPO_ACCESS_TOKEN, APPLICATION_NAME, DYNAMO_TABLE, DYNAMO_GSI, ACMARN, BASE_API, BASE_API_2 } = environVars // TODO Move these to secrets
 const { Stack, Duration, SecretValue } = require('aws-cdk-lib');
 
 class ClientCdkStack extends Stack {
@@ -507,7 +507,7 @@ class ClientCdkStack extends Stack {
     })
 
     const passwordResetConfirm = api.root.addResource('passwordresetconfirm')
-    passwordResetConfirm.addMethod('GET', new apigateway.LambdaIntegration(passwordResetConfirmLambda, { proxy:true}))
+    passwordResetConfirm.addMethod('POST', new apigateway.LambdaIntegration(passwordResetConfirmLambda, { proxy:true}))
     passwordResetConfirm.addCorsPreflight({
       allowOrigins: apigateway.Cors.ALL_ORIGINS
     })

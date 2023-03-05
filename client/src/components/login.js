@@ -17,22 +17,16 @@ const headers = {
   "Access-Control-Allow-Origin": "*"
 }
 
-const Message = (message) => {
-  return <div className='errorMessage'>{message.message}</div>
-}
-
 const onFinishFailed = (errorInfo) => {
   console.log('Failed:', errorInfo);
 };
 
 const checkPassword = (password, retyped) => {
-  // TODO implement this
+  // TODO implement this as a helper function
   return true
 }
 
 const Login = (props) => {
-  const [ activeSection, setActiveSection ] = useState('login');
-  const [ authDetails, setAuthDetails ] = useState(initialState)
   const [ errorMessage, setErrorMessage ] = useState({})
   const navigate = useNavigate()
 
@@ -49,40 +43,76 @@ const Login = (props) => {
       try{
         let signup = await axios.post(`${baseUrl}signup`, {email, password}, headers)
         if(signup.data.message === 'error'){
-          setErrorMessage({create:'Error creating account, try again!'})
+          setErrorMessage({
+            create:{
+              message:'Error creating account, try again!',
+              type:'error'
+            }
+          })
         } else {
-          await navigate('/checkmail')
+          setErrorMessage({
+            create:{
+              message:'Check your email, and follow the instructions to activate your account',
+              type:'success'
+            }
+          })
         }
       }
       catch(e){
-        setErrorMessage({create:'Error creating account, try again!'})
+        setErrorMessage({
+          create:{
+            message:'Error creating account, try again!',
+            type:'error'
+          }
+        })
       }
     }
   }
 
   const handlePasswordReset = async (data) => {
+    const email = data.email
+    // TODO regex to make sure an email is entered
     try{
       let reset = await axios.post(`${baseUrl}passwordreset`, {email}, headers)
-      console.log(reset)
       if(reset.data.message === 'error'){
-        setErrorMessage({reset:'Error reseting password!'})
+        setErrorMessage({
+          reset:{
+            message:'Error reseting password!',
+            type:'error'
+          }
+        })
       } else {
-        await navigate('/checkmailreset')
+        setErrorMessage({
+          reset:{
+            message:'Check your email, and follow the instructions to reset your password',
+            type:'success'
+          }
+        })
       }
     }
     catch(e){
-      setErrorMessage({reset:'Error reseting password!'})
+      setErrorMessage({
+        reset:{
+          message:'Error reseting password!',
+          type:'error'
+        }
+      })
     }
   }
 
   const handleLogin = async (data) => {
-    console.log(data)
     let email = data.email
     let password = data.password
+    // TODO handle "remember me"
     try{
       let signin = await axios.post(`${baseUrl}signin`, {email, password}, headers)
       if(signin.data.message === 'error'){
-        setErrorMessage({signin:'Wrong user and/or password, try again!'})
+        setErrorMessage({
+          signin:{
+            message:'Wrong user and/or password, try again!',
+            type:'error'
+          }
+        })
       } else {
         await props.setAuth({user:signin.data.user_mail})
         await localStorage.setItem('emillosAccessToken', signin.data.access_token)
@@ -90,7 +120,12 @@ const Login = (props) => {
       }
     }
     catch(e){
-      setErrorMessage({signin:'Wrong user and/or password, try again!'})
+      setErrorMessage({
+        signin:{
+          message:'Wrong user and/or password, try again!',
+          type: 'error'
+        }
+      })
     }
   }
 
@@ -100,9 +135,8 @@ const Login = (props) => {
         <Divider>Signin</Divider>
         {errorMessage.signin &&
           <Alert
-          message="Error"
-          description={errorMessage.signin}
-          type="error"
+          description={errorMessage.signin.message}
+          type={errorMessage.signin.type}
           showIcon
           closable/>
         }
@@ -143,6 +177,13 @@ const Login = (props) => {
 
         <Collapse>
         <Panel header="Reset Password" key="1">
+        {errorMessage.reset &&
+          <Alert
+          description={errorMessage.reset.message}
+          type={errorMessage.reset.type}
+          showIcon
+          closable/>
+        }
         <Form
             name="reset"
             labelCol={{ span: 8 }}
@@ -171,6 +212,13 @@ const Login = (props) => {
         </Collapse>
 
         <Divider>Create Account</Divider>
+        {errorMessage.create &&
+          <Alert
+          description={errorMessage.create.message}
+          type={errorMessage.create.type}
+          showIcon
+          closable/>
+        }
         <Form          
           name="create"
           labelCol={{ span: 8 }}
