@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button, Checkbox, Form, Input, Divider, Collapse, Alert } from 'antd';
 const { Panel } = Collapse;
 import axios from 'axios';
 import '../styles/loginStyle.less'
 
 const baseUrl = 'https://api.emillos.com/'
-const initialState = {
-  email:'',
-  password: '',
-  passwordCheck:'',
-  userName:''
-}
+
 const headers = {
   "Access-Control-Allow-Headers" : "Application/json",
   "Access-Control-Allow-Origin": "*"
@@ -20,11 +15,6 @@ const headers = {
 const onFinishFailed = (errorInfo) => {
   console.log('Failed:', errorInfo);
 };
-
-const checkPassword = (password, retyped) => {
-  // TODO implement this as a helper function
-  return true
-}
 
 const Login = (props) => {
   const [ errorMessage, setErrorMessage ] = useState({})
@@ -39,33 +29,32 @@ const Login = (props) => {
   const handleCreate = async (data) => {
     const email = data.email
     const password = data.password
-    if(checkPassword()){
-      try{
-        let signup = await axios.post(`${baseUrl}signup`, {email, password}, headers)
-        if(signup.data.message === 'error'){
-          setErrorMessage({
-            create:{
-              message:'Error creating account, try again!',
-              type:'error'
-            }
-          })
-        } else {
-          setErrorMessage({
-            create:{
-              message:'Check your email, and follow the instructions to activate your account',
-              type:'success'
-            }
-          })
-        }
-      }
-      catch(e){
+
+    try{
+      let signup = await axios.post(`${baseUrl}signup`, {email, password}, headers)
+      if(signup.data.message != 'ok'){
         setErrorMessage({
           create:{
-            message:'Error creating account, try again!',
+            message: signup.data.message,
             type:'error'
           }
         })
+      } else {
+        setErrorMessage({
+          create:{
+            message:'Check your email, and follow the instructions to activate your account',
+            type:'success'
+          }
+        })
       }
+    }
+    catch(e){
+      setErrorMessage({
+        create:{
+          message:'Error creating account, try again!',
+          type:'error'
+        }
+      })
     }
   }
 
@@ -106,10 +95,10 @@ const Login = (props) => {
     // TODO handle "remember me"
     try{
       let signin = await axios.post(`${baseUrl}signin`, {email, password}, headers)
-      if(signin.data.message === 'error'){
+      if(signin.data.message != 'ok'){
         setErrorMessage({
           signin:{
-            message:'Wrong user and/or password, try again!',
+            message: signin.data.message,
             type:'error'
           }
         })
