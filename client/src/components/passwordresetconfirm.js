@@ -12,6 +12,7 @@ const onFinish = async(e, values, setErrorMessage) => {
   const {passwordRetype, newPassword} = e
   const navigate = useNavigate()
   values["password"] = newPassword
+  values["retypePassword"] = passwordRetype
   if(checkPassword()){
     try{
       let setPw = await axios.post(`${baseUrl}passwordresetconfirm`, values, headers)
