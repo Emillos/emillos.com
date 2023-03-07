@@ -13,7 +13,7 @@ def handler(event, context):
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "*",
         "Access-Control-Allow-Headers": "*",
-        "Location": "https://{}/signin".format(os.environ["DOMAIN"]), # DOMAIN should come cognito setup in cdk
+        "Location": "https://{}/closeme?component=create&success=true".format(os.environ["DOMAIN"]), # DOMAIN should come cognito setup in cdk
     },
     "body": "{'status':'ok'}"
   }
@@ -28,8 +28,8 @@ def handler(event, context):
       Username=user_name,
       ConfirmationCode=confirmation_code
     )
-    res["headers"]["Location"] = 'https://{}/signin?signupok=true'.format(os.environ["DOMAIN"])
+    res["headers"]["Location"] = 'https://{}/closeme?component=create&success=true'.format(os.environ["DOMAIN"])
   except Exception as e: 
     print(e)
-    res["headers"]["Location"] = 'https://{}/signin?signupok=false'.format(os.environ["DOMAIN"])
+    res["headers"]["Location"] = 'https://{}/closeme?component=create&success=false'.format(os.environ["DOMAIN"])
   return res

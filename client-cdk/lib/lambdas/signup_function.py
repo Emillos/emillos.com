@@ -1,12 +1,14 @@
 import boto3
 import os
 import json
+from helpers.pw_compare import pw_compare
 from pprint import pprint
 client = boto3.client('cognito-idp')
 CLIENT_ID = os.environ["COGNITO_APP_CLIENT_ID"]
 
 def handler(event, context):
     body = json.loads(event['body'])
+
     res = {
         "statusCode": 200,
         "headers": {
@@ -16,6 +18,15 @@ def handler(event, context):
             "Access-Control-Allow-Methods":'*'
         }, "body": {}
     }
+
+    pw_match = pw_compare(body.get("password"), body.get("retypePassword"))
+    if pw_match != True:
+        res["body"]["message"] = {
+            "message":pw_match,
+            "type": "error"
+        }
+        res["body"] = json.dumps(res["body"])
+        return res
     try:
         response = client.sign_up(
             ClientId=CLIENT_ID,
@@ -28,19 +39,34 @@ def handler(event, context):
                 },
             ]
         )
-        res["body"]["message"] = "ok"
+        res["body"]["message"] = {
+            "message":"Check your email, and follow the instructions to activate your account",
+            "type": "success"
+        }
     except client.exceptions.UsernameExistsException:
-        res["body"]["message"] = "User is already exists"
+        res["body"]["message"] = {
+            "message":"User is already exists",
+            "type": "error"
+        }
 
     except client.exceptions.UserLambdaValidationException:
-        res["body"]["message"] = "User is already exists"
+        res["body"]["message"] = {
+            "message":"User is already exists",
+            "type": "error"
+        }
 
     except Exception as e:
         if "message" not in res["body"]:
             if e.__class__.__name__ == "ParamValidationError":
-                res["body"]["message"] = "Password must be at least 6 characters long and contain at least one number"
+                res["body"]["message"] = {
+                   "message":"Password must be at least 6 characters long and contain at least one number",
+                    "type": "error"
+            }
             else:
-                res["body"]["message"] = "An error occored, try again"
+                res["body"]["message"] = {
+                    "message":"An error occored, try again",
+                    "type": "error"
+                }
 
     res["body"] = json.dumps(res["body"])
     return res

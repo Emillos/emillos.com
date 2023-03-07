@@ -7,6 +7,7 @@ import Login from './login'
 import CheckMail from './checkmail'
 import CheckMailReset from './checkmailreset'
 import PasswordRestConfirm from './passwordresetconfirm';
+import CloseMe from './closeMe'
 import axios from 'axios'
 import ClickACcat from '../projects/clickAcat/index'
 import ShadowRabbit from '../projects/shadowRabbit/app'
@@ -50,6 +51,7 @@ const Auth = () => {
       </Header>
       <Routes>
         <Route path="/" element={<Front />} />
+        <Route path="closeme" element={<CloseMe />} />
         <Route path='checkmail/' element={<CheckMail />} />
         <Route path='checkmailreset/' element={<CheckMailReset />} />
         <Route path='passwordresetconfirm' element={<PasswordRestConfirm />} />

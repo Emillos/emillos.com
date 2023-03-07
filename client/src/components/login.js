@@ -27,26 +27,16 @@ const Login = (props) => {
   })
 
   const handleCreate = async (data) => {
-    const email = data.email
-    const password = data.password
-
+    const {email, password, retypePassword} = data
+    
     try{
-      let signup = await axios.post(`${baseUrl}signup`, {email, password}, headers)
-      if(signup.data.message != 'ok'){
-        setErrorMessage({
-          create:{
-            message: signup.data.message,
-            type:'error'
-          }
-        })
-      } else {
-        setErrorMessage({
-          create:{
-            message:'Check your email, and follow the instructions to activate your account',
-            type:'success'
-          }
-        })
-      }
+      let signup = await axios.post(`${baseUrl}signup`, {email, password, retypePassword}, headers)
+      setErrorMessage({
+        create:{
+          message: signup.data.message.message,
+          type: signup.data.message.type
+        }
+      })
     }
     catch(e){
       setErrorMessage({
