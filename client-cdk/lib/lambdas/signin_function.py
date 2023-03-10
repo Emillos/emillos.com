@@ -18,6 +18,7 @@ def handler(event, context):
   body = json.loads(event['body'])
   email = body.get("email")
   password = body.get("password")
+  # regex to check pw
   try:
     initial_auth = client.initiate_auth(
       AuthFlow="USER_PASSWORD_AUTH",
@@ -28,9 +29,19 @@ def handler(event, context):
       }
     )
     res["body"]["message"] = "ok"
+
   except Exception as e:
-    print(e)
-    res["body"]["message"] = "error"
+    print(e.__class__)
+    if e.__class__.__name__ == "NotAuthorizedException":
+      res["body"]["message"] = {
+        "message":"Email or password is incorrect, please check and try again",
+        "type": "error"
+      }
+    else:
+      res["body"]["message"] = {
+        "message":"An error occored, try again",
+        "type": "error"
+      }
   
   if res["body"]["message"] == "ok":
     access_token = initial_auth.get("AuthenticationResult").get("AccessToken")
@@ -43,9 +54,12 @@ def handler(event, context):
       res["body"]["refresh_token"] = refresh_token
       res["body"]["user_mail"] = email
     except Exception as e:
-      print(e)
-      res["body"]["message"] = "error"
-  
+      print(e.__class__)
+      res["body"]["message"] = {
+        "message":"An error occored, try again",
+        "type": "error"
+      }
+
   res["body"] = json.dumps(res["body"])
   
   return res

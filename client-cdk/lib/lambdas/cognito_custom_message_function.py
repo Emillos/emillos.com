@@ -1,5 +1,6 @@
 import os
 BASE_API = os.environ["BASE_API"]
+BASE_API_SITE = os.environ["BASE_API_2"]
 
 def handler(event, context):
   code = event.get("request").get("codeParameter")
@@ -24,7 +25,7 @@ def handler(event, context):
   
   if event.get("triggerSource") == 'CustomMessage_ForgotPassword':
     target = "passwordresetconfirm"
-    link = '{}{}?code={}&userName={}&clientId={}&region={}&email={}'.format(BASE_API, target, code, user_name, client_id, region, email)
+    link = '{}{}?code={}&userName={}&clientId={}&region={}&email={}'.format(BASE_API_SITE, target, code, user_name, client_id, region, email)
     event["response"]["emailSubject"] = 'Reset password!'
     event["response"]["emailMessage"] = """
         <p style='text-align: center;'>

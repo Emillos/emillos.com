@@ -50,24 +50,14 @@ const Login = (props) => {
 
   const handlePasswordReset = async (data) => {
     const email = data.email
-    // TODO regex to make sure an email is entered
     try{
       let reset = await axios.post(`${baseUrl}passwordreset`, {email}, headers)
-      if(reset.data.message === 'error'){
-        setErrorMessage({
-          reset:{
-            message:'Error reseting password!',
-            type:'error'
-          }
-        })
-      } else {
-        setErrorMessage({
-          reset:{
-            message:'Check your email, and follow the instructions to reset your password',
-            type:'success'
-          }
-        })
-      }
+      setErrorMessage({
+        reset:{
+          message: reset.data.message.message,
+          type: reset.data.message.type
+        }
+      })
     }
     catch(e){
       setErrorMessage({
@@ -80,21 +70,21 @@ const Login = (props) => {
   }
 
   const handleLogin = async (data) => {
-    let email = data.email
-    let password = data.password
-    // TODO handle "remember me"
+    const {email, password, remember} = data
     try{
       let signin = await axios.post(`${baseUrl}signin`, {email, password}, headers)
       if(signin.data.message != 'ok'){
         setErrorMessage({
           signin:{
-            message: signin.data.message,
-            type:'error'
+            message: signin.data.message.message,
+            type: signin.data.message.type
           }
         })
       } else {
         await props.setAuth({user:signin.data.user_mail})
-        await localStorage.setItem('emillosAccessToken', signin.data.access_token)
+        if(remember){
+          await localStorage.setItem('emillosAccessToken', signin.data.access_token)
+        }
         await navigate('/')
       }
     }

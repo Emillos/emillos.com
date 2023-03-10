@@ -23,7 +23,10 @@ def handler(event, context):
       ClientId=os.environ["COGNITO_APP_CLIENT_ID"],
       Username=email
     )
-    res["body"]["message"] = "ok"
+    res["body"]["message"] = {
+      "message":"Success: An email has been sent with further instructions",
+      "type": "success"
+    }
   except Exception as e:
     print(e)
     res["body"]["message"] = "error"
