@@ -11,7 +11,10 @@ import CloseMe from './closeMe'
 import axios from 'axios'
 import ClickACcat from '../projects/clickAcat/index'
 import ShadowRabbit from '../projects/shadowRabbit/app'
-
+import {
+  LinkedinOutlined,
+  GithubOutlined
+} from '@ant-design/icons';
 import { Layout, Space, FloatButton } from 'antd';
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -47,7 +50,15 @@ const Auth = () => {
       <Header>
         <TopNav auth={auth} setAuth={setAuth} />
         <FloatButton shape="square"
-        onClick={() => console.log('click')} />
+          icon={<LinkedinOutlined />}
+          style={{ bottom: 24 }}
+          href='https://www.linkedin.com/in/emil-filtenborg-99551699/' 
+          target='_blank'/>
+        <FloatButton shape="square"
+          icon={<GithubOutlined />}
+          style={{ bottom: 94 }}
+          href='https://github.com/Emillos/emillos.com' 
+          target='_blank' />
       </Header>
       <Routes>
         <Route path="/" element={<Front />} />
