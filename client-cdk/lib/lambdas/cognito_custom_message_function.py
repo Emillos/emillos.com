@@ -1,8 +1,10 @@
 import os
+from pprint import pprint
 BASE_API = os.environ["BASE_API"]
 BASE_API_SITE = os.environ["BASE_API_2"]
 
 def handler(event, context):
+  pprint(event)
   code = event.get("request").get("codeParameter")
   user_name = event.get("userName")
   region = event.get("region")

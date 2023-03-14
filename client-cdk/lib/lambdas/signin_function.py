@@ -1,7 +1,7 @@
 import boto3
 import os
 import json
-
+from pprint import pprint
 client = boto3.client('cognito-idp')
 CLIENT_ID = os.environ["COGNITO_APP_CLIENT_ID"]
 
@@ -18,7 +18,7 @@ def handler(event, context):
   body = json.loads(event['body'])
   email = body.get("email")
   password = body.get("password")
-  # regex to check pw
+
   try:
     initial_auth = client.initiate_auth(
       AuthFlow="USER_PASSWORD_AUTH",
@@ -28,6 +28,7 @@ def handler(event, context):
           "PASSWORD": password
       }
     )
+    pprint(initial_auth)
     res["body"]["message"] = "ok"
 
   except Exception as e:
@@ -50,6 +51,7 @@ def handler(event, context):
       response = client.get_user(
         AccessToken=access_token
       )
+      # get userdetails from dynamo
       res["body"]["access_token"] = access_token
       res["body"]["refresh_token"] = refresh_token
       res["body"]["user_mail"] = email
