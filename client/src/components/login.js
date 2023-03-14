@@ -27,10 +27,10 @@ const Login = (props) => {
   })
 
   const handleCreate = async (data) => {
-    const {email, password, retypePassword} = data
+    const {email, password, retypePassword, username} = data
     
     try{
-      let signup = await axios.post(`${baseUrl}signup`, {email, password, retypePassword}, headers)
+      let signup = await axios.post(`${baseUrl}signup`, {email, password, retypePassword, username}, headers)
       setErrorMessage({
         create:{
           message: signup.data.message.message,
@@ -197,7 +197,14 @@ const Login = (props) => {
           onFinish={handleCreate}
           onFinishFailed={onFinishFailed}
           autoComplete="off">
-          
+
+          <Form.Item
+            label="Username"
+            name="username"
+            rules={[{ required: true, message: 'Please select a username!' }]}>
+            <Input />
+          </Form.Item>
+
           <Form.Item
             label="Email"
             name="email"

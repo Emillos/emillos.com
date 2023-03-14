@@ -119,6 +119,9 @@ class ClientCdkStack extends Stack {
     // Cognito
     const userPool = new cognito.UserPool(this, `${APPLICATION_NAME}Userpool`, {
       userPoolName: `${APPLICATION_NAME}Userpool`,
+      customAttributes:{
+        "username": new cognito.StringAttribute({ minLen: 2, maxLen: 15, mutable: true })
+      },
       selfSignUpEnabled: true, 
       userVerification: {
         emailSubject: `${HOSTED_ZONE_NAME} Support`,

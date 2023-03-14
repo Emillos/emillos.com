@@ -8,7 +8,7 @@ CLIENT_ID = os.environ["COGNITO_APP_CLIENT_ID"]
 
 def handler(event, context):
     body = json.loads(event['body'])
-
+    pprint(body)
     res = {
         "statusCode": 200,
         "headers": {
@@ -37,6 +37,10 @@ def handler(event, context):
                     'Name': 'email',
                     'Value': body.get("email")
                 },
+                {
+                    'Name': 'custom:username',
+                    'Value': body.get("username")
+                },
             ]
         )
         res["body"]["message"] = {
@@ -56,6 +60,7 @@ def handler(event, context):
         }
 
     except Exception as e:
+        pprint(e)
         if "message" not in res["body"]:
             if e.__class__.__name__ == "ParamValidationError":
                 res["body"]["message"] = {
