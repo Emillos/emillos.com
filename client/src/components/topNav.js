@@ -34,7 +34,7 @@ const TopNav = (props) => {
       <div className='topHeader textCenter'>
           <Dropdown menu={{ items }} 
             placement="bottomRight">
-            <h2 className='lh'>{props.auth.user}</h2>
+            <h2 className='lh'>{props.auth.user.username}</h2>
           </Dropdown>
         
       </div>

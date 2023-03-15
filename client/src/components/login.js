@@ -81,7 +81,10 @@ const Login = (props) => {
           }
         })
       } else {
-        await props.setAuth({user:signin.data.user_mail})
+        await props.setAuth({user:{
+          username: signin.data.username,
+          role: signin.data.user_mail
+        }})
         if(remember){
           await localStorage.setItem('emillosAccessToken', signin.data.access_token)
         }

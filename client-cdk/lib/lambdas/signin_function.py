@@ -1,9 +1,12 @@
 import boto3
 import os
 import json
+from boto3.dynamodb.conditions import Key
 from pprint import pprint
 client = boto3.client('cognito-idp')
 CLIENT_ID = os.environ["COGNITO_APP_CLIENT_ID"]
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table(os.environ["USER_TABLE"])
 
 def handler(event, context):
   res = { 
@@ -28,7 +31,6 @@ def handler(event, context):
           "PASSWORD": password
       }
     )
-    pprint(initial_auth)
     res["body"]["message"] = "ok"
 
   except Exception as e:
@@ -51,10 +53,18 @@ def handler(event, context):
       response = client.get_user(
         AccessToken=access_token
       )
-      # get userdetails from dynamo
       res["body"]["access_token"] = access_token
       res["body"]["refresh_token"] = refresh_token
-      res["body"]["user_mail"] = email
+
+      dynamo_res = table.get_item(
+        Key={
+          "pk": response.get("Username"), 
+          "sk": "user:profile"
+        }
+      )
+
+      res["body"]["username"] = dynamo_res.get("Item").get("username")
+      res["body"]["role"] = dynamo_res.get("Item").get("role")
     except Exception as e:
       print(e.__class__)
       res["body"]["message"] = {

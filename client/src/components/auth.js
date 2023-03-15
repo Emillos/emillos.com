@@ -32,7 +32,10 @@ const getFromLocalStorage = async (setAuth) => {
     if(message === 'error'){
       console.log('try refresh token')
     } else {
-      setAuth({user:UserAttributes[UserAttributes.length -1].Value})
+      setAuth({user:{
+        username:UserAttributes[UserAttributes.length -2].Value},
+        role: "1" // will be returned from signin
+      })
     }
   }
 }
