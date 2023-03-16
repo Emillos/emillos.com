@@ -15,8 +15,8 @@ import {
   LinkedinOutlined,
   GithubOutlined
 } from '@ant-design/icons';
-import { Layout, Space, FloatButton } from 'antd';
-const { Header, Footer, Sider, Content } = Layout;
+import { Layout, FloatButton } from 'antd';
+const { Header } = Layout;
 
 const baseUrl = 'https://api.emillos.com/'
 const headers = {
@@ -28,13 +28,15 @@ const getFromLocalStorage = async (setAuth) => {
   const accessToken = localStorage.getItem('emillosAccessToken');
   if(accessToken){
     let signin = await axios.post(`${baseUrl}getuserdetails`, {accessToken}, headers)
-    const {message, data:{UserAttributes}} = signin.data
+    const {message, data:{username, role}} = signin.data
     if(message === 'error'){
       console.log('try refresh token')
     } else {
-      setAuth({user:{
-        username:UserAttributes[UserAttributes.length -2].Value},
-        role: "1" // will be returned from signin
+      setAuth({
+        user:{
+          username,
+          role
+        }
       })
     }
   }

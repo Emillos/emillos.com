@@ -2,6 +2,8 @@ import boto3
 import os
 import json
 from pprint import pprint
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table(os.environ["USER_TABLE"])
 client = boto3.client('cognito-idp')
 
 def handler(event, context):
@@ -19,9 +21,20 @@ def handler(event, context):
   try:
     user_details = client.get_user(
       AccessToken=access_token
-      )
-    pprint(user_details)
-    res["body"] = {"message":"ok", "data":user_details}
+    )
+    dynamo_res = table.get_item(
+      Key={
+        "pk": user_details.get("Username"),
+        "sk": "user:profile"
+      }
+    )
+    res["body"] = {
+      "message":"ok",
+      "data":{
+        "username": dynamo_res.get("Item").get("username"),
+        "role": dynamo_res.get("Item").get("role")
+      }
+    }
   except Exception as e:
     class_name = e.__class__.__name__
     print(class_name + ': ' + str(e))
