@@ -1,25 +1,16 @@
 import boto3
 import os
 import json
-
+from helpers.standard_response import standard_response
 client = boto3.client('cognito-idp')
 
 def handler(event, context):
   body = json.loads(event['body'])
   email = body.get("email")
-
-  res = { 
-    "statusCode": 200, 
-    "headers": {
-      "Access-Control-Allow-Origin" : "*", # Required for CORS support to work
-      "Access-Control-Allow-Credentials" : True, # Required for cookies, authorization headers with HTTPS
-      "Access-Control-Allow-Headers": "Application/json",
-      "Access-Control-Allow-Methods":"*"
-    }, "body": {} 
-  }
+  res = standard_response()
 
   try:
-    forgot = client.forgot_password(
+    client.forgot_password(
       ClientId=os.environ["COGNITO_APP_CLIENT_ID"],
       Username=email
     )

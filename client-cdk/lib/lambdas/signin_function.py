@@ -2,22 +2,15 @@ import boto3
 import os
 import json
 from boto3.dynamodb.conditions import Key
-from pprint import pprint
+from helpers.standard_response import standard_response
+
 client = boto3.client('cognito-idp')
 CLIENT_ID = os.environ["COGNITO_APP_CLIENT_ID"]
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table(os.environ["USER_TABLE"])
 
 def handler(event, context):
-  res = { 
-    "statusCode": 200, 
-  	"headers": {
-    "Access-Control-Allow-Origin" : "*", # Required for CORS support to work
-    "Access-Control-Allow-Credentials" : True, # Required for cookies, authorization headers with HTTPS
-  	"Access-Control-Allow-Headers": "Application/json",
-  	"Access-Control-Allow-Methods":"*"
-  	}, "body": {} }
-
+  res = standard_response()
   body = json.loads(event['body'])
   email = body.get("email")
   password = body.get("password")
@@ -32,7 +25,23 @@ def handler(event, context):
       }
     )
     res["body"]["message"] = "ok"
+    access_token = initial_auth.get("AuthenticationResult").get("AccessToken")
+    refresh_token = initial_auth.get("AuthenticationResult").get("RefreshToken")
+    response = client.get_user(
+      AccessToken=access_token
+    )
+    res["body"]["access_token"] = access_token
+    res["body"]["refresh_token"] = refresh_token
 
+    dynamo_res = table.get_item(
+      Key={
+        "pk": response.get("Username"), 
+        "sk": "user:profile"
+      }
+    )
+
+    res["body"]["username"] = dynamo_res.get("Item").get("username")
+    res["body"]["role"] = dynamo_res.get("Item").get("role")
   except Exception as e:
     print(e.__class__)
     if e.__class__.__name__ == "NotAuthorizedException":
@@ -41,32 +50,6 @@ def handler(event, context):
         "type": "error"
       }
     else:
-      res["body"]["message"] = {
-        "message":"An error occored, try again",
-        "type": "error"
-      }
-  
-  if res["body"]["message"] == "ok":
-    access_token = initial_auth.get("AuthenticationResult").get("AccessToken")
-    refresh_token = initial_auth.get("AuthenticationResult").get("RefreshToken")
-    try:
-      response = client.get_user(
-        AccessToken=access_token
-      )
-      res["body"]["access_token"] = access_token
-      res["body"]["refresh_token"] = refresh_token
-
-      dynamo_res = table.get_item(
-        Key={
-          "pk": response.get("Username"), 
-          "sk": "user:profile"
-        }
-      )
-
-      res["body"]["username"] = dynamo_res.get("Item").get("username")
-      res["body"]["role"] = dynamo_res.get("Item").get("role")
-    except Exception as e:
-      print(e.__class__)
       res["body"]["message"] = {
         "message":"An error occored, try again",
         "type": "error"

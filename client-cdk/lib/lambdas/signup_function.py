@@ -2,22 +2,14 @@ import boto3
 import os
 import json
 from helpers.pw_compare import pw_compare
-from pprint import pprint
+from helpers.standard_response import standard_response
+
 client = boto3.client('cognito-idp')
 CLIENT_ID = os.environ["COGNITO_APP_CLIENT_ID"]
 
 def handler(event, context):
     body = json.loads(event['body'])
-    pprint(body)
-    res = {
-        "statusCode": 200,
-        "headers": {
-            "Access-Control-Allow-Origin" : "*", # Required for CORS support to work
-            "Access-Control-Allow-Credentials" : True, # Required for cookies, authorization headers with HTTPS
-            "Access-Control-Allow-Headers": "Application/json",
-            "Access-Control-Allow-Methods":'*'
-        }, "body": {}
-    }
+    res = standard_response()
 
     pw_match = pw_compare(body.get("password"), body.get("retypePassword"))
     if pw_match != True:
@@ -28,7 +20,7 @@ def handler(event, context):
         res["body"] = json.dumps(res["body"])
         return res
     try:
-        response = client.sign_up(
+        client.sign_up(
             ClientId=CLIENT_ID,
             Username=body.get("email"),
             Password=body.get("password"),
@@ -60,7 +52,6 @@ def handler(event, context):
         }
 
     except Exception as e:
-        pprint(e)
         if "message" not in res["body"]:
             if e.__class__.__name__ == "ParamValidationError":
                 res["body"]["message"] = {
