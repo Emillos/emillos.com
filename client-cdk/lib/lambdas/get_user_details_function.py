@@ -1,23 +1,16 @@
 import boto3
 import os
 import json
-from pprint import pprint
+from helpers.standard_response import standard_response
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table(os.environ["USER_TABLE"])
 client = boto3.client('cognito-idp')
 
 def handler(event, context):
-  res = { 
-    "statusCode": 200, 
-  	"headers": {
-    "Access-Control-Allow-Origin" : "*", # Required for CORS support to work
-    "Access-Control-Allow-Credentials" : True, # Required for cookies, authorization headers with HTTPS
-  	"Access-Control-Allow-Headers": "Application/json",
-  	"Access-Control-Allow-Methods":"*"
-  	}, "body": {} }
-  
   body = json.loads(event['body'])
+  res = standard_response()
   access_token = body.get("accessToken")
+
   try:
     user_details = client.get_user(
       AccessToken=access_token

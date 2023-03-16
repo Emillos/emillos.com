@@ -2,21 +2,13 @@ import boto3
 import json
 import os
 from helpers.pw_compare import pw_compare
+from helpers.standard_response import standard_response
 client = boto3.client('cognito-idp')
 
 def handler(event, context):
-  res = { 
-    "statusCode": 200, 
-    "headers": {
-      "Access-Control-Allow-Origin" : "*", # Required for CORS support to work
-      "Access-Control-Allow-Credentials" : True, # Required for cookies, authorization headers with HTTPS
-      "Access-Control-Allow-Headers": "Application/json",
-      "Access-Control-Allow-Methods":"*"
-    }, "body": {} 
-  }
-
-  client_id = os.environ["COGNITO_APP_CLIENT_ID"]
   body = json.loads(event['body'])
+  res = standard_response()
+  client_id = os.environ["COGNITO_APP_CLIENT_ID"]
   email = body.get("email")
   code = body.get("code")
   password = body.get("password")
@@ -30,7 +22,7 @@ def handler(event, context):
     res["body"] = json.dumps(res["body"])
     return res
   try:
-    confirm = client.confirm_forgot_password(
+    client.confirm_forgot_password(
       ClientId=client_id,
       ConfirmationCode=code,
       Username=email,
