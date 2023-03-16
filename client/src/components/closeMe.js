@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import { useSearchParams } from "react-router-dom";
+import { Alert } from 'antd';
 
 const components = {
   pwreset: {
@@ -18,17 +19,13 @@ const CloseMe = () => {
     component: searchParams.get('component'),
     success: searchParams.get('success')
   })
-  console.log(urlParams)
   return (
     <div id='closeMe'>
-      <h2>{urlParams.success === 'true' ? "Success" : "Error"}</h2>
-      <div>
-        {urlParams.success === 'true' ? 
-          <p>{components[urlParams.component].success}</p> 
-          : 
-          <p>{components[urlParams.component].error}</p> 
-        }
-      </div>
+      <Alert
+        style={{textAlign:'center'}}
+        description={components[urlParams.component][urlParams.success === 'true' ? "success" : "error"]}
+        type={urlParams.success === 'true' ? "success" : "error"}
+        showIcon/>
     </div>
   )
 }
