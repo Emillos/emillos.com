@@ -13,7 +13,7 @@ This project allows users to upload documents which will be exposed to predefine
 - Manipulation of cloudwatch jobs
 - CDK multistack
 
-## Architecture
+## Functionallity
 ### Three different invokations:
 - User sets a switch as active
 - User checks in
