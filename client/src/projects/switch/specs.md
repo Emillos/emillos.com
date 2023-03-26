@@ -46,3 +46,7 @@ This project allows users to upload documents which will be exposed to predefine
 ### S3
 - When a user uploads document, a new folder (name: user_id) is created and the documents uploaded to it
 
+## Questions:
+- How to handle multiple schedules for a user - as multiple schedules involves multiple sets of documents?
+ - Assign id to schedule and prefix documents with the id
+ - Assign id to schedule and create subfolders in the users s3

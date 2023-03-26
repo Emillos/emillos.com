@@ -6,7 +6,7 @@
   "main": "src/index.js",
   "scripts": {
     "test": "echo ok",
-    "start": "node ./scripts/generateFooterData && webpack serve --open --config webpack.dev.js --hot",
+    "start": "webpack serve --open --config webpack.dev.js --hot",
     "build": "webpack --config webpack.prod.js"
   },
   "dependencies": {
