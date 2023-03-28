@@ -28,6 +28,16 @@ const Front = () => {
             </Card>
           </Link>
         </Col>
+        <Col span={8}>
+          <Link to='/switch'>
+            <Card
+              hoverable
+              style={{ width: 240 }}
+              cover={<img alt="example" src='https://www.shutterstock.com/image-illustration/dirty-torn-pirates-flag-illustration-260nw-1770408863.jpg' />}>
+              <Meta title="Dead man switch" description='Tool' />
+            </Card>
+          </Link>
+        </Col>
       </Row>
     </div>
   )

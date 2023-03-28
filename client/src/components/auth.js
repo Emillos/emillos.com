@@ -11,6 +11,7 @@ import CloseMe from './closeMe'
 import axios from 'axios'
 import ClickACcat from '../projects/clickAcat/index'
 import ShadowRabbit from '../projects/shadowRabbit/app'
+import Switch from '../projects/switch'
 import {
   LinkedinOutlined,
   GithubOutlined
@@ -73,6 +74,7 @@ const Auth = () => {
         <Route path='passwordresetconfirm' element={<PasswordRestConfirm />} />
         <Route path='clickacat/' element={<ClickACcat />} />
         <Route path='shadowrabbit/' element={<ShadowRabbit />} />
+        <Route path='switch/' element={<Switch />} />
         <Route path='signin/' element={<Login auth={auth} setAuth={setAuth} />} />
         <Route path="*" element={<NoShow />} />
       </Routes>

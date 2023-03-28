@@ -32,7 +32,7 @@ const getHighScoresAPI = async (setHighscores) => {
 }
 
 const Front = () => {
-  const [ clickCount, setClickCount ] = useState(0);
+  const [ clickCount, setClickCount ] = useState(0)
   const [ timerBool, setTimerBool ] = useState(false)
   const [ seconds, setSeconds ] = useState(initialSeconds)
   const [ showGame, setShowGame ] = useState(true)
