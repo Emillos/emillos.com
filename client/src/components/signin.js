@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from "react-router-dom";
 
 const Signin = () => {
-  // get url params to show ok or error
   return (
     <div id='signinn'>
       <p>Congratulations! Your account has been activated!</p>

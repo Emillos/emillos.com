@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { InboxOutlined } from '@ant-design/icons';
-import { TimePicker, DatePicker, Space, Select, InputNumber, Divider, Badge, Collapse, Modal, message, Upload } from 'antd'
+import { InboxOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Alert, TimePicker, DatePicker, Space, Select, InputNumber, Divider, Badge, Collapse, Modal, message, Upload, List } from 'antd'
+import {cronToText, textToCron, epochToTime} from './helpers'
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 
@@ -96,24 +97,35 @@ const Switch = () => {
     setEditData(item)
     showEditModal()
   }
+  const deleteItem = () => {
+    console.log('deleteItem')
+  }
   useEffect( async () => {
     setSwitchData(dummyData.data)
   }, [])
   return (
     <div>
+      <Alert
+        message='Please note that this project is still under construction, and may not work as expected'
+        type={'warning'}
+        closable/>
+      
       <Divider>The Dead Man Switch!</Divider>
       {switchData.map((item, i) => {
-        const {id, status, epoch, invoked} = item
+        const {id, status, checkIn, start, invoked} = item
         return(
           <div className='switchBox' key={id}>
             <div className='textBox'>
               <p>Status: <Badge status={status && "processing"} color={status ? 'green' : 'red'}/></p>
-              <p>Schedule: {epoch}</p>
+              <p>Schedule: {cronToText(checkIn)}</p>
               {status &&
                 <p>Next check in before: soon</p>
               }
-              {invoked &&
-                <p>Was invoked on:</p>
+              {invoked > 0 &&
+                <p>Was invoked on: {epochToTime(invoked)}</p>
+              }
+              {start > 0 &&
+                <p>Will start: {epochToTime(start)}</p>
               }
               <input type='button' value='Edit' onClick={(e) => editClick(e, item)}/>
             </div>
@@ -148,7 +160,7 @@ const Switch = () => {
         <div className='scheduleCreate'>
           <Space wrap>
             <label>Check-in every:</label>
-            <InputNumber min={1} max={23} defaultValue={1} onChange={onNumberChange} />
+            <InputNumber min={1} defaultValue={1} onChange={onNumberChange} />
             <Select
               defaultValue="hours"
               style={{ width: 120 }}
@@ -184,7 +196,63 @@ const Switch = () => {
         onOk={handleEditModalOk}
         confirmLoading={confirmLoading}
         onCancel={handleModalEditCancel}>
-        {editData.id}
+          <Divider>Edit Check-in Time</Divider>
+            <div className='editScection short'>
+              <label>Current: </label>
+              <p>{cronToText(editData.checkIn)}</p>
+            </div>
+            <div className='editScection wide'>
+              <p>New:</p>
+              <Space wrap>
+                <InputNumber 
+                  min={1} 
+                  defaultValue={1} 
+                  onChange={onNumberChange}
+                />
+                <Select
+                  defaultValue="hours"
+                  onChange={handleSelectChange}
+                  options={[
+                    {value: 'hours', label: 'Hours'}, 
+                    {value: 'days', label: 'Days'}, 
+                    {value: 'weeks', label: 'Weeks'},
+                    {value: 'Months', label: 'Months'},
+                    {value: 'years', label: 'Years'}
+                  ]}
+                />
+              </Space>
+            </div>
+          <Divider>Edit Start Time</Divider>
+          <div className='editScection short'>
+            <label>Current: </label>
+            <p>{epochToTime(editData.start)}</p>
+          </div>
+          <div className='editScection wide'>
+            <p>Start time: </p>
+            <Space wrap>
+              <DatePicker onChange={onDateChange} defaultValue={dayjs('2015/01/01')} />
+              <TimePicker onChange={onTimeChange} defaultValue={dayjs('00:00:00', 'HH:mm:ss')} />
+            </Space>
+          </div>
+          <Divider>Documents</Divider>
+          <p>Current</p>
+          <List
+            size="small"
+            bordered
+            dataSource={editData.documents}
+            renderItem={(item) => <List.Item><DeleteOutlined onClick={() => deleteItem()}/> {item}</List.Item>}
+          />
+          <Space wrap>
+          <p>Upload</p>
+          </Space>
+          <Dragger {...props}>
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined />
+            </p>
+            <p className="ant-upload-text">Click or drag file to this area to upload</p>
+            <p className="ant-upload-hint">Support for a single or bulk upload</p>
+          </Dragger>
+
       </Modal>
     </div>
   )
