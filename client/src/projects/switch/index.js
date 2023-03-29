@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { InboxOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Alert, TimePicker, DatePicker, Space, Select, InputNumber, Divider, Badge, Collapse, Modal, message, Upload, List } from 'antd'
-import {cronToText, textToCron, epochToTime} from './helpers'
+import { Button, Alert, TimePicker, DatePicker, Space, Select, InputNumber, Divider, Badge, Collapse, Modal, message, Upload, List } from 'antd'
+import {cronToText, textToCron, epochToTime, formatEpoch} from './helpers'
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 
 dayjs.extend(customParseFormat)
+
+// TODO CLEAN THIS MESSY CODE!!!!1
 
 const { Panel } = Collapse;
 const { Dragger } = Upload;
@@ -40,6 +42,7 @@ const Switch = () => {
   const [ modalText, setModalText] = useState('Content of the modal')
   const [ editModalText, setEditModalText] = useState('Content of the modal')
   const [ editData, setEditData ] = useState({})
+  const [ updateSwitchData, setUpdateSwitchData ] = useState({})
 
   const handleModalOk = () => {
     setModalText('The modal will be closed after two seconds')
@@ -97,8 +100,18 @@ const Switch = () => {
     setEditData(item)
     showEditModal()
   }
+  const deactivateSwitch = () => {
+    console.log('deactivate switch')
+  }
+
   const deleteItem = () => {
     console.log('deleteItem')
+  }
+  const activateSwitch = () => {
+    console.log('activate switch')
+  }
+  const checkInClick = () => {
+    console.log('check in')
   }
   useEffect( async () => {
     setSwitchData(dummyData.data)
@@ -131,9 +144,9 @@ const Switch = () => {
             </div>
             <div className='buttonBox'>
               {!status ?
-              <input type='button' value='Activate' style={{backgroundColor:'orange'}}/>
+              <input type='button' value='Activate' style={{backgroundColor:'orange'}} onClick={() => activateSwitch()}/>
               :
-              <input type='button' value='Check In' />
+              <input type='button' value='Check In' onClick={() => checkInClick()}/>
               }              
             </div>
             <Collapse>
@@ -189,6 +202,7 @@ const Switch = () => {
           <p className="ant-upload-hint">Support for a single or bulk upload</p>
         </Dragger>
       </Modal>
+       {/* Edit Modal */}
       <Modal
         title="Edit switch"
         destroyOnClose
@@ -196,6 +210,13 @@ const Switch = () => {
         onOk={handleEditModalOk}
         confirmLoading={confirmLoading}
         onCancel={handleModalEditCancel}>
+          {editData.status &&
+            <Space wrap>
+              <Button type="primary" danger onClick={() => deactivateSwitch()}>
+                Deactivate switch!
+              </Button>
+            </Space>
+          }
           <Divider>Edit Check-in Time</Divider>
             <div className='editScection short'>
               <label>Current: </label>
@@ -225,14 +246,22 @@ const Switch = () => {
           <Divider>Edit Start Time</Divider>
           <div className='editScection short'>
             <label>Current: </label>
-            <p>{epochToTime(editData.start)}</p>
+            {editData.start > 0 ?
+              <p>{epochToTime(editData.start)}</p>
+            :
+              <p>Switch is active</p>
+            }
           </div>
           <div className='editScection wide'>
-            <p>Start time: </p>
-            <Space wrap>
-              <DatePicker onChange={onDateChange} defaultValue={dayjs('2015/01/01')} />
-              <TimePicker onChange={onTimeChange} defaultValue={dayjs('00:00:00', 'HH:mm:ss')} />
-            </Space>
+            <p>New: </p>
+            {editData.start > 0 ?
+              <Space wrap>
+                <DatePicker onChange={onDateChange} defaultValue={dayjs(epochToTime(editData.start).slice(0, 10))} />
+                <TimePicker onChange={onTimeChange} defaultValue={dayjs(epochToTime(editData.start).slice(10), 'HH:mm:ss')} />
+              </Space>
+            :
+            <p>Deactivate switch to add a start time</p>
+          }
           </div>
           <Divider>Documents</Divider>
           <p>Current</p>
@@ -252,7 +281,6 @@ const Switch = () => {
             <p className="ant-upload-text">Click or drag file to this area to upload</p>
             <p className="ant-upload-hint">Support for a single or bulk upload</p>
           </Dragger>
-
       </Modal>
     </div>
   )
