@@ -164,6 +164,7 @@ const Switch = () => {
       <div className='newSwitch switchBox' onClick={showModal}>
         Create new switch
       </div>
+      {/* Create Modal*/}
       <Modal
         title="Create new switch"
         open={modalOpen}
