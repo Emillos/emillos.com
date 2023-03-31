@@ -4,20 +4,20 @@ export const cronToText = (cronish) => {
     return ''
   }
   const cronishExp = cronish.split(' ');
-  const frequency = ["hour", "day", "week", "month", "year"] 
+  const frequency = ["Hour", "Day", "Week", "Month", "Year"] 
   let returnText = ''
   cronishExp.forEach((element, i) => {
     if(element !== '0'){
-      returnText = `Every ${element} ${frequency[i]}${element > 1 ? 's' : ''}`
+      returnText = `Every ${element} ${frequency[i]}s`
     }
   })
   return returnText
 }
 
-export const textToCron = (text) => {
+export const textToCronish = (text) => {
   const parts = text.split(' ');
-  const frequency = Number(parts[0]);
-  const unit = parts[1].toLowerCase();
+  const frequency = Number(parts[0])
+  const unit = parts[1].toLowerCase()
 
   const units = {
     'hour': {
