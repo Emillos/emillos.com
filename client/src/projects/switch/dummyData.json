@@ -9,6 +9,9 @@
       "documents":[
         "hi.jpg",
         "tax.txt"
+      ],
+      "emails":[
+        "olebole123@ole1.dk"
       ]
     },
     {
@@ -20,6 +23,10 @@
       "documents":[
         "recipt.png",
         "convo.docx"
+      ],
+      "emails":[
+        "olebole123@ole1.dk",
+        "olebole111@ole2.dk"
       ]
     },
     {
@@ -30,6 +37,11 @@
       "invoked": 1671123123,
       "documents":[
         "cats.png"
+      ],
+      "emails":[
+        "olebole123@ole1.dk",
+        "olebole111@ole2.dk",
+        "olebole222@ole23.dk"
       ]
     }
   ]

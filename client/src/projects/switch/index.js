@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { InboxOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Button, Alert, TimePicker, DatePicker, Space, Select, InputNumber, Divider, Badge, Collapse, Modal, message, Upload, List } from 'antd'
+import { Input, Button, Alert, TimePicker, DatePicker, Space, Select, InputNumber, Divider, Badge, Collapse, Modal, message, Upload, List } from 'antd'
 import {cronToText, textToCron, epochToTime, formatEpoch} from './helpers'
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat'
@@ -13,6 +13,7 @@ const { Panel } = Collapse;
 const { Dragger } = Upload;
 import dummyData from './dummyData.json'
 import '../../styles/switchStyle.less'
+import { getStyle } from 'antd/es/checkbox/style';
 
 const props = {
   name: 'file',
@@ -35,17 +36,15 @@ const props = {
 }
 
 const Switch = () => {
-  const [ switchData, setSwitchData ] = useState([])
-  const [ modalOpen, setOpen] = useState(false)
-  const [ editModalOpen, setEditOpen] = useState(false)
+  const [switchData, setSwitchData] = useState([])
+  const [modalOpen, setOpen] = useState(false)
+  const [editModalOpen, setEditOpen] = useState(false)
   const [confirmLoading, setConfirmLoading] = useState(false)
-  const [ modalText, setModalText] = useState('Content of the modal')
-  const [ editModalText, setEditModalText] = useState('Content of the modal')
-  const [ editData, setEditData ] = useState({})
-  const [ updateSwitchData, setUpdateSwitchData ] = useState({})
+  const [editData, setEditData] = useState({})
+  const [editSwitchData, setEditSwitchData] = useState({})
+  const [createData, setCreateData] = useState({})
 
   const handleModalOk = () => {
-    setModalText('The modal will be closed after two seconds')
     setConfirmLoading(true)
     setTimeout(() => {
       setOpen(false)
@@ -54,7 +53,6 @@ const Switch = () => {
   }
 
   const handleEditModalOk = () => {
-    setEditModalText('The modal will be closed after two seconds')
     setConfirmLoading(true)
     setTimeout(() => {
       setEditOpen(false)
@@ -64,6 +62,13 @@ const Switch = () => {
 
   const handleSelectChange = (value) => {
     console.log(`selected ${value}`);
+  };
+
+  const handleSelectEditChange = (value, id) => {
+    console.log(`selected ${value}`, id);
+    let a = Object.assign({}, editSwitchData)
+    a[id].unit = value
+    setEditSwitchData({...editSwitchData, ...a})
   };
 
   const handleModalEditCancel = () => {
@@ -88,24 +93,86 @@ const Switch = () => {
     console.log('changed', value);
   }
 
+  const onNumberEditChange = (value, id) => {
+    console.log('changed', value,  id);
+    setEditSwitchData({...editSwitchData, ...editSwitchData[id]['frequency'] = value})
+  }
+
   const onTimeChange = (time, timeString) => {
     console.log(time, timeString);
+  }
+
+  const addMail = () => {
+    console.log(createData)
+    let a = Object.assign({}, createData)
+    if(a.emails){
+      console.log('1')
+      a.emails = a.emails.concat([a.emailInput])
+    } else {
+      console.log('2')
+      a.emails = [a.emailInput]
+    }
+    a.emailInput = ''
+    setCreateData({...createData, ...a})
+  }
+
+  const onEditTimeChange = (time, timeString, id) => {
+    let a = Object.assign({}, editSwitchData)
+    a[id].time = timeString
+    setEditSwitchData({...editSwitchData, ...a})
   };
 
   const onDateChange = (date, dateString) => {
     console.log(date, dateString);
-  };
+  }
 
+  const onEditDateChange = (date, dateString, id) => {
+    let a = Object.assign({}, editSwitchData)
+    a[id].date = dateString
+    setEditSwitchData({...editSwitchData, ...a})
+  }
+
+  const getStyle = (id, item) => {
+    console.log('id', id, item)
+    console.log('doku1', editSwitchData[id].documents)
+    let style = {
+      'color':'black'
+    }
+    if(editSwitchData[id].documents){
+      console.log('docus', editSwitchData[id].documents)
+      if(editSwitchData[id].documents.includes(item)){
+        style.color = 'red'
+      }
+    }
+    return style
+  }
+
+  const emailInput = (e) => {
+    let a = Object.assign({}, createData)
+    a.emailInput = e.target.value
+    setCreateData({...createData, ...a})
+  }
+  
   const editClick = (e, item) => {
+    console.log('t')
     setEditData(item)
+    setEditSwitchData({[item.id]:{}})
     showEditModal()
   }
-  const deactivateSwitch = () => {
-    console.log('deactivate switch')
+  const deactivateSwitch = (e, id) => {
+    console.log('deactivate switch with id:', id)
   }
 
-  const deleteItem = () => {
-    console.log('deleteItem')
+  const removeItem = (val, id) => {
+    let a = Object.assign({}, editSwitchData)
+    console.log('a', a)
+    if(a[id].documents && a[id].documents.includes(val)){
+      let index = a[id].documents.indexOf(val);
+      a[id].documents.splice(index, 1);
+    } else {
+      a[id].documents = a[id].documents ? a[id].documents.concat([val]) : [val]
+    }
+    setEditSwitchData({...editSwitchData, ...a})
   }
   const activateSwitch = () => {
     console.log('activate switch')
@@ -113,13 +180,40 @@ const Switch = () => {
   const checkInClick = () => {
     console.log('check in')
   }
+  const checkForChange = (origVals, newVals) => {
+    // origVala is the original value as aerray
+    // values is new values as an array
+    let changes = []
+    for(let i = 0;i<newVals.length;i++){
+      if(Boolean(newVals[i])){
+        changes.splice(i,0,String(newVals[i]))
+      }
+    }
+    let changeDetected = false
+    for(let o = 0;o<changes.length;o++){
+      if(!origVals.includes(changes[o])){
+        changeDetected = true
+      }
+    }
+    if(changeDetected){
+      return (
+        <Alert
+          message='This section has been modified'
+          type={'success'}
+        />
+      )
+    }
+
+    return false
+
+  }
   useEffect( async () => {
     setSwitchData(dummyData.data)
   }, [])
   return (
     <div>
       <Alert
-        message='Please note that this project is still under construction, and may not work as expected'
+        message='Please note that this project is still under construction, and this project does not look, feel or work as expected yet'
         type={'warning'}
         closable/>
       
@@ -129,7 +223,7 @@ const Switch = () => {
         return(
           <div className='switchBox' key={id}>
             <div className='textBox'>
-              <p>Status: <Badge status={status && "processing"} color={status ? 'green' : 'red'}/></p>
+              <p>Status: <Badge status={status && "proacessing"} color={status ? 'green' : 'red'}/></p>
               <p>Schedule: {cronToText(checkIn)}</p>
               {status &&
                 <p>Next check in before: soon</p>
@@ -158,6 +252,15 @@ const Switch = () => {
                 })}
               </Panel>
             </Collapse>
+            <Collapse>
+              <Panel header="Contacts" key="2">
+                {item.emails.map((mail, i) => {
+                  return(
+                    <div key={`${mail}${i}`}>{mail}</div>
+                  )
+                })}
+              </Panel>
+            </Collapse>
           </div>
         )
       })}
@@ -168,9 +271,15 @@ const Switch = () => {
       <Modal
         title="Create new switch"
         open={modalOpen}
-        onOk={handleModalOk}
-        confirmLoading={confirmLoading}
-        onCancel={handleModalCancel}>
+        footer={[
+          <Button key="back" onClick={handleModalCancel}>
+            Cancel
+          </Button>,
+          <Button key="submit" type="primary" loading={confirmLoading} onClick={handleModalOk}>
+            Create Switch
+          </Button>
+        ]}>
+        {console.log(createData)}
         <div className='scheduleCreate'>
           <Space wrap>
             <label>Check-in every:</label>
@@ -180,11 +289,11 @@ const Switch = () => {
               style={{ width: 120 }}
               onChange={handleSelectChange}
               options={[
-                {value: 'hours', label: 'Hours'}, 
-                {value: 'days', label: 'Days'}, 
-                {value: 'weeks', label: 'Weeks'},
+                {value: 'Hours', label: 'Hours'}, 
+                {value: 'Days', label: 'Days'}, 
+                {value: 'Weeks', label: 'Weeks'},
                 {value: 'Months', label: 'Months'},
-                {value: 'years', label: 'Years'}
+                {value: 'Years', label: 'Years'}
               ]}
             />
           </Space>
@@ -202,23 +311,47 @@ const Switch = () => {
           <p className="ant-upload-text">Click or drag file to this area to upload</p>
           <p className="ant-upload-hint">Support for a single or bulk upload</p>
         </Dragger>
+        <Divider>Contacts</Divider>
+        <Space.Compact style={{ width: '100%' }}>
+          <Input placeholder="Email" onChange={(e) => emailInput(e)} value={createData.emailInput || ''} />
+          <Button type="primary" onClick={() => addMail()}>Add Email</Button>
+        </Space.Compact>
+
+        {createData.emails && 
+          <List
+            size="small"
+            bordered
+            dataSource={createData.emails}
+            renderItem={(item) => <List.Item><DeleteOutlined onClick={() => console.log(item)}/>{item}</List.Item>}
+          />
+        }
       </Modal>
        {/* Edit Modal */}
       <Modal
         title="Edit switch"
         destroyOnClose
         open={editModalOpen}
-        onOk={handleEditModalOk}
-        confirmLoading={confirmLoading}
-        onCancel={handleModalEditCancel}>
+        footer={[
+          <Button key="back" onClick={handleModalEditCancel}>
+            Cancel
+          </Button>,
+          <Button key="submit" type="primary" loading={confirmLoading} onClick={handleEditModalOk}>
+            Save Changes
+          </Button>
+        ]}>
+          {console.log(editSwitchData)}
           {editData.status &&
             <Space wrap>
-              <Button type="primary" danger onClick={() => deactivateSwitch()}>
+              <Button type="primary" danger onClick={(e) => deactivateSwitch(e, editData.id)}>
                 Deactivate switch!
               </Button>
             </Space>
           }
           <Divider>Edit Check-in Time</Divider>
+            {checkForChange(
+              cronToText(editData.checkIn).split(' ').slice(1), 
+              [editSwitchData[editData.id]?.frequency, editSwitchData[editData.id]?.unit ]
+            )}
             <div className='editScection short'>
               <label>Current: </label>
               <p>{cronToText(editData.checkIn)}</p>
@@ -228,23 +361,27 @@ const Switch = () => {
               <Space wrap>
                 <InputNumber 
                   min={1} 
-                  defaultValue={1} 
-                  onChange={onNumberChange}
+                  defaultValue={cronToText(editData.checkIn).split(' ')[1]} 
+                  onChange={(e) => onNumberEditChange(e, editData.id)}
                 />
                 <Select
-                  defaultValue="hours"
-                  onChange={handleSelectChange}
+                  defaultValue={cronToText(editData.checkIn).split(' ')[2]}
+                  onChange={(e) => handleSelectEditChange(e, editData.id)}
                   options={[
-                    {value: 'hours', label: 'Hours'}, 
-                    {value: 'days', label: 'Days'}, 
-                    {value: 'weeks', label: 'Weeks'},
+                    {value: 'Hours', label: 'Hours'}, 
+                    {value: 'Days', label: 'Days'}, 
+                    {value: 'Weeks', label: 'Weeks'},
                     {value: 'Months', label: 'Months'},
-                    {value: 'years', label: 'Years'}
+                    {value: 'Years', label: 'Years'}
                   ]}
                 />
               </Space>
             </div>
           <Divider>Edit Start Time</Divider>
+          {checkForChange(
+              epochToTime(editData.start).split(' '), 
+              [editSwitchData[editData.id]?.date, editSwitchData[editData.id]?.time]
+            )}
           <div className='editScection short'>
             <label>Current: </label>
             {editData.start > 0 ?
@@ -257,20 +394,20 @@ const Switch = () => {
             <p>New: </p>
             {editData.start > 0 ?
               <Space wrap>
-                <DatePicker onChange={onDateChange} defaultValue={dayjs(epochToTime(editData.start).slice(0, 10))} />
-                <TimePicker onChange={onTimeChange} defaultValue={dayjs(epochToTime(editData.start).slice(10), 'HH:mm:ss')} />
+                <DatePicker onChange={(date, dateString) => onEditDateChange(date, dateString, editData.id)} defaultValue={dayjs(epochToTime(editData.start).slice(0, 10))} />
+                <TimePicker onChange={(time, timeString) => onEditTimeChange(time, timeString, editData.id)} defaultValue={dayjs(epochToTime(editData.start).slice(10), 'HH:mm:ss')} />
               </Space>
             :
             <p>Deactivate switch to add a start time</p>
           }
           </div>
-          <Divider>Documents</Divider>
+          <Divider>Edit Documents</Divider>
           <p>Current</p>
           <List
             size="small"
             bordered
             dataSource={editData.documents}
-            renderItem={(item) => <List.Item><DeleteOutlined onClick={() => deleteItem()}/> {item}</List.Item>}
+            renderItem={(item) => <List.Item style={getStyle(editData.id, item)}><DeleteOutlined onClick={() => removeItem(item, editData.id)}/>{item}</List.Item>}
           />
           <Space wrap>
           <p>Upload</p>
@@ -282,6 +419,20 @@ const Switch = () => {
             <p className="ant-upload-text">Click or drag file to this area to upload</p>
             <p className="ant-upload-hint">Support for a single or bulk upload</p>
           </Dragger>
+          <Divider>Edit Contacts</Divider>
+          <Space.Compact style={{ width: '100%' }}>
+            <Input placeholder="Email" onChange={(e) => emailInput(e)} value={editData.emailInput || ''} />
+            <Button type="primary" onClick={() => addMail()}>Add Email</Button>
+          </Space.Compact>
+
+          {editData.emails && 
+            <List
+              size="small"
+              bordered
+              dataSource={editData.emails}
+              renderItem={(item) => <List.Item><DeleteOutlined onClick={() => console.log(item)}/>{item}</List.Item>}
+            />
+          }
       </Modal>
     </div>
   )
