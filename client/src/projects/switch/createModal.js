@@ -13,8 +13,11 @@ const CreateModal = (props) => {
   const {modalOpen, setOpen} = props
   const [createData, setCreateData] = useState({})
   const [confirmLoading, setConfirmLoading] = useState(false)
-  const onNumberChange = (value) => {
-    console.log('changed', value);
+
+  const change = (value, field) => {
+    let a = Object.assign({}, createData)
+    a[field] = value
+    setCreateData({...createData, ...a})
   }
 
   const handleModalOk = () => {
@@ -25,41 +28,29 @@ const CreateModal = (props) => {
     }, 2000)
   }
 
-  const handleSelectChange = (value) => {
-    console.log(`selected ${value}`);
-  };
-
   const handleModalCancel = () => {
     console.log('Clicked cancel button');
     setOpen(false);
   }
 
-  const onTimeChange = (time, timeString) => {
-    console.log(time, timeString);
+  const removeMail = (e, val) => {
+    let a = Object.assign({}, createData)
+    let index = a.emails.indexOf(val);
+    a.emails.splice(index, 1);
+    setCreateData({...createData, ...a})
   }
 
   const addMail = () => {
-    console.log(createData)
     let a = Object.assign({}, createData)
-    if(a.emails){
-      console.log('1')
-      a.emails = a.emails.concat([a.emailInput])
-    } else {
-      console.log('2')
-      a.emails = [a.emailInput]
+    if(a.emailInput){
+      if(a.emails){
+        a.emails = a.emails.concat([a.emailInput])
+      } else {
+        a.emails = [a.emailInput]
+      }
+      a.emailInput = ''
+      setCreateData({...createData, ...a})
     }
-    a.emailInput = ''
-    setCreateData({...createData, ...a})
-  }
-
-  const onDateChange = (date, dateString) => {
-    console.log(date, dateString);
-  }
-
-  const emailInput = (e) => {
-    let a = Object.assign({}, createData)
-    a.emailInput = e.target.value
-    setCreateData({...createData, ...a})
   }
 
   return (
@@ -75,15 +66,14 @@ const CreateModal = (props) => {
         Create Switch
       </Button>
     ]}>
-
     <div className='scheduleCreate'>
       <Space wrap>
         <label>Check-in every:</label>
-        <InputNumber min={1} defaultValue={1} onChange={onNumberChange} />
+        <InputNumber min={1} defaultValue={1} onChange={(e) => change(e, 'frequency')} />
         <Select
           defaultValue="hours"
           style={{ width: 120 }}
-          onChange={handleSelectChange}
+          onChange={(e) => change(e, 'unit')}
           options={[
             {value: 'Hours', label: 'Hours'}, 
             {value: 'Days', label: 'Days'}, 
@@ -95,8 +85,8 @@ const CreateModal = (props) => {
       </Space>
       <Space wrap>
         <label>Start time: </label>
-        <DatePicker onChange={onDateChange} defaultValue={dayjs('2015/01/01')} />
-        <TimePicker onChange={onTimeChange} defaultValue={dayjs('00:00:00', 'HH:mm:ss')} />
+        <DatePicker onChange={(e, h) => change(h, 'date')} defaultValue={dayjs('2015/01/01')} />
+        <TimePicker onChange={(e, h) => change(h, 'time')} defaultValue={dayjs('00:00:00', 'HH:mm:ss')} />
       </Space>
     </div>
     <Divider>Documents</Divider>
@@ -109,7 +99,7 @@ const CreateModal = (props) => {
     </Dragger>
     <Divider>Contacts</Divider>
     <Space.Compact style={{ width: '100%' }}>
-      <Input placeholder="Email" onChange={(e) => emailInput(e)} value={createData.emailInput || ''} />
+      <Input placeholder="Email" onChange={(e) => change(e.target.value, 'emailInput')} value={createData.emailInput || ''} />
       <Button type="primary" onClick={() => addMail()}>Add Email</Button>
     </Space.Compact>
 
@@ -118,7 +108,7 @@ const CreateModal = (props) => {
         size="small"
         bordered
         dataSource={createData.emails}
-        renderItem={(item) => <List.Item><DeleteOutlined onClick={() => console.log(item)}/>{item}</List.Item>}
+        renderItem={(item) => <List.Item><DeleteOutlined onClick={(e) => removeMail(e, item)}/>{item}</List.Item>}
       />
     }
   </Modal>
