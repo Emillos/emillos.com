@@ -21,26 +21,15 @@ const EditModal = (props) => {
     }, 2000)
   }
 
-  const handleSelectEditChange = (value, id) => {
+  const change = (value, id, field) => {
     let a = Object.assign({}, editSwitchData)
-    a[id].unit = value
-    setEditSwitchData({...editSwitchData, ...a})
-  };
-
-  const handleModalEditCancel = () => {
-    console.log('Clicked cancel button');
-    setEditOpen(false);
-  }
-
-  const onNumberEditChange = (value, id) => {
-    let a = Object.assign({}, editSwitchData)
-    a[id]['frequency'] = value
+    a[id][field] = value
     setEditSwitchData({...editSwitchData, ...a})
   }
 
-  const onEditTimeChange = (time, timeString, id) => {
+  const emailInput = (e) => {
     let a = Object.assign({}, editSwitchData)
-    a[id].time = timeString
+    a.emailInput = e.target.value
     setEditSwitchData({...editSwitchData, ...a})
   }
 
@@ -54,6 +43,10 @@ const EditModal = (props) => {
       }
     }
     return style
+  }
+
+  const handleModalEditCancel = () => {
+    setEditOpen(false);
   }
 
   const checkForChange = (origVals, newVals) => {
@@ -93,16 +86,30 @@ const EditModal = (props) => {
     setEditSwitchData({...editSwitchData, ...a})
   }
 
-  const onEditDateChange = (date, dateString, id) => {
-    let a = Object.assign({}, editSwitchData)
-    a[id].date = dateString
-    setEditSwitchData({...editSwitchData, ...a})
-  }
-
   const setInitalSwitchEditData = (editData, editSwitchData) => {
     if(editData.id && !editSwitchData.hasOwnProperty(editData.id)){
       setEditSwitchData({[editData.id]:{}})
     }
+  }
+
+  const addMail = () => {
+    let a = Object.assign({}, editSwitchData)
+    if(a.emailInput){
+      if(a.emails){
+        a.emails = a.emails.concat([a.emailInput])
+      } else {
+        a.emails = [a.emailInput]
+      }
+      a.emailInput = ''
+      setEditSwitchData({...editSwitchData, ...a})
+    }
+  }
+
+  const removeMail = (e, val) => {
+    let a = Object.assign({}, editSwitchData)
+    let index = a.emails.indexOf(val);
+    a.emails.splice(index, 1);
+    setEditSwitchData({...editSwitchData, ...a})
   }
 
   return (
@@ -120,7 +127,6 @@ const EditModal = (props) => {
       </Button>
     ]}>
       {setInitalSwitchEditData(editData, editSwitchData)}
-      {/* {console.log('editSwitchData', editSwitchData)} */}
       {editData?.status &&
         <Space wrap>
           <Button type="primary" danger onClick={(e) => deactivateSwitch(e, editData.id)}>
@@ -143,11 +149,11 @@ const EditModal = (props) => {
             <InputNumber 
               min={1} 
               defaultValue={cronToText(editData?.checkIn).split(' ')[1]} 
-              onChange={(e) => onNumberEditChange(e, editData?.id)}
+              onChange={(e) => change(e, editData?.id, 'frequency')}
             />
             <Select
               defaultValue={cronToText(editData?.checkIn).split(' ')[2]}
-              onChange={(e) => handleSelectEditChange(e, editData?.id)}
+              onChange={(e) => change(e, editData?.id, 'unit')}
               options={[
                 {value: 'Hours', label: 'Hours'}, 
                 {value: 'Days', label: 'Days'}, 
@@ -175,8 +181,8 @@ const EditModal = (props) => {
         <p>New: </p>
         {editData?.start > 0 ?
           <Space wrap>
-            <DatePicker onChange={(date, dateString) => onEditDateChange(date, dateString, editData.id)} defaultValue={dayjs(epochToTime(editData.start).slice(0, 10))} />
-            <TimePicker onChange={(time, timeString) => onEditTimeChange(time, timeString, editData.id)} defaultValue={dayjs(epochToTime(editData.start).slice(10), 'HH:mm:ss')} />
+            <DatePicker onChange={(date, dateString) => change(dateString, editData.id, 'date')} defaultValue={dayjs(epochToTime(editData.start).slice(0, 10))} />
+            <TimePicker onChange={(time, timeString) => change(timeString, editData.id, 'time')} defaultValue={dayjs(epochToTime(editData.start).slice(10), 'HH:mm:ss')} />
           </Space>
         :
         <p>Deactivate switch to add a start time</p>
@@ -202,10 +208,18 @@ const EditModal = (props) => {
       </Dragger>
       <Divider>Edit Contacts</Divider>
       <Space.Compact style={{ width: '100%' }}>
-        <Input placeholder="Email" onChange={(e) => emailInput(e)} value={editData?.emailInput || ''} />
+        <Input placeholder="Email" onChange={(e) => emailInput(e)} value={editSwitchData?.emailInput || ''} />
         <Button type="primary" onClick={() => addMail()}>Add Email</Button>
       </Space.Compact>
 
+      {editSwitchData?.emails && editSwitchData.emails.map((item, it) => {
+        return(
+          <div style={{'color':'green'}}>
+            <DeleteOutlined onClick={(e) => removeMail(e, item)}/>
+            {item}
+          </div>
+        )
+      })}
       {editData?.emails && 
         <List
           size="small"
